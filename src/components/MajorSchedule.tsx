@@ -106,7 +106,6 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
         };
     }, []);
 
-
     useEffect(() => {
         console.clear();
         setDevWidth(window.innerWidth)
@@ -159,10 +158,10 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
 
         const notEmptyDaysNum = chosenScheduleData.plan.filter(day => day.length > 0).length
 
-        console.log(notEmptyDaysNum);
+        if (isDev) console.log("Nie puste dni", notEmptyDaysNum);
         if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum)
         return (
-            <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }} className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1`}>
+            <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }} className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1 border`}>
                 {
                     // Todo: zło konieczne: Opracować algorytm, który będzie dobierać ilość kolumn w zależności od tego jaka jest szerokość urządzenia oraz ile jest dni w których są lekcje
                     chosenScheduleData?.plan.map((day, index) => {
@@ -323,7 +322,7 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     }, [filteredMajors, selectedYear, data]);
 
     return (
-        <div className={`relative h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+        <div className={`relative h-[90vh] md:h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
             <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData ? (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
@@ -343,7 +342,7 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                                 </datalist>
                             )}
                         </div>
-                        <IoFilter onClick={() => setShowYearSelection(!showYearSelection)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
+                        <IoFilter title='Wybierz rok do wyświetlenia' onClick={() => setShowYearSelection(!showYearSelection)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
                         {showYearSelection && (
                             <div className={`absolute right-4 top-14 flex flex-col items-center bg-white dark:bg-gray-900 z-10 p-2 rounded-xl transition-colors duration-[2s]`}>
                                 <span className={`text-2xl sm:text-3xl mb-1 text-black dark:text-white ${colorsSmooth}`}>Wybierz rok</span>
@@ -380,7 +379,6 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                             <FaAngleLeft />
                         </button>
                         <div className={`w-full flex items-center justify-center gap-3 text-xl text-center text-black dark:text-white ${colorsSmooth}`}>
-                            {/* devWidth < 640 skrócić słowo */}
                             {devWidth < 444 ? chosenScheduleData.name?.split(" ").map(word => word.length > 6 ? word.slice(0, 3) + ". " : word + " ") : chosenScheduleData.name} {" "}
                             {chosenScheduleData.groups[0]}
                         </div>
@@ -388,10 +386,10 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                 )}
             </div>
             {!chosenScheduleData &&
-                <div className='w-full sm:h-full flex items-center justify-center flex-col overflow-y-hidden sm:px-3'>
+                <div className='w-full flex items-center justify-center flex-col overflow-y-hidden sm:px-3'>
                     <div className={`w-full min-[1300px]:w-[90vw] h-full flex items-center justify-center flex-col sm:rounded-lg overflow-hidden sm:mb-1 px-2 ${isDev && devBorder}`}>
                         {/* min-[1893px]:w-fit */}
-                        <ul className={`w-full h-screen grid grid-cols-2 min-[430px]:grid-cols-2 sm:grid-cols-3 min-[886px]:grid-cols-4 min-[1060px]:grid-cols-5 place-items-center content-start gap-2 md:gap-4 px-2 mt-1 md:px-2 lg:px-3 py-2 custom-scrollbar overflow-y-auto overflow-x-hidden text-sm xl:text-base min-[1300px]:text-xl ${isDev && devBorder}`}>
+                        <ul className={`w-full grid grid-cols-2 min-[430px]:grid-cols-2 sm:grid-cols-3 min-[886px]:grid-cols-4 min-[1060px]:grid-cols-5 place-items-center content-start gap-2 md:gap-4 px-2 mt-1 md:px-2 lg:px-3 py-2 custom-scrollbar overflow-y-auto overflow-x-hidden text-sm xl:text-base min-[1300px]:text-xl ${isDev && devBorder}`}>
                             {showMajors()}
                         </ul>
                     </div>

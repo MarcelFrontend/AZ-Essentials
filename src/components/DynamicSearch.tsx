@@ -300,7 +300,7 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                         <FaAngleLeft />
                     </button>
                     <div
-                        className={`bg-transparent shadow-[1px_2px_10px_1px_rgb(125,125,125)] dark:shadow-[1px_2px_8px_1px_rgb(10,10,10)] dark:bg-gray-900 rounded-xl py-7 px-4 md:px-7 flex items-center justify-center flex-col gap-2 ${colorsSmooth} duration-700 ${isDev && "border border-red-500"}`}>
+                        className={`bg-transparent shadow-[1px_2px_10px_1px_rgb(225,225,225)] dark:shadow-[1px_2px_8px_1px_rgb(10,10,10)] dark:bg-gray-900 rounded-xl py-7 px-4 md:px-7 flex items-center justify-center flex-col gap-2 ${colorsSmooth} duration-700 ${isDev && "border border-red-500"}`}>
                         {/* Todo: resetowanie reszty pól gdy zmienia się wprowadzana wartość */}
                         <input
                             type="text"
@@ -325,7 +325,7 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                             </datalist>
                         )}
                         <select className={`${optionsStyle}`} onChange={(e) => fetchDay(e.target.value)}
-                            disabled={searchInput == ""}>
+                            disabled={searchInput.length < 3}>
                             <option hidden>Wybierz dzień</option>
                             {daysInSearchType.map((day, i) => (
                                 <option key={i} value={day}>{day}</option>
@@ -340,7 +340,7 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                         </select>
                     </div>
                     <button
-                        className={`text-[32px] md:text-6xl px-7 py-1.5 rounded-lg focus:border-black focus:scale-[1.1] bg-gray-100 dark:bg-gray-900 disabled:shadow-[0px_4px_10px_4px_rgb(75,75,75)] shadow-[0px_4px_10px_4px_rgb(150,150,150)] dark:shadow-[0px_2px_10px_2px_rgb(10,10,10)] transition-all duration-150 disabled:hover:scale-100 disabled:active:scale-100 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${colorsSmooth} transition-transform`}
+                        className={`text-[32px] md:text-6xl px-7 py-1.5 rounded-lg focus:border-black focus:scale-[1.1] disabled:shadow-[0px_4px_10px_4px_rgb(150,150,150)] shadow-[0px_4px_10px_4px_rgb(225,225,225)] dark:shadow-[0px_2px_10px_2px_rgb(10,10,10)] transition-all duration-150 disabled:hover:scale-100 disabled:active:scale-100 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${colorsSmooth} transition-transform`}
                         onClick={handleCheck}
                         disabled={(!hoursInput)}>
                         <span className={`text-black dark:text-gray-200 ${colorsSmooth} `}>
