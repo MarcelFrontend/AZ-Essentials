@@ -182,7 +182,7 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                                         {showDays[index] ? <FaAngleUp className='text-4xl' /> : <FaAngleDown className='text-4xl' />}
                                     </button>
                                 </div>
-                                <div className={`max-h-full ${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'grid-cols-2' : 'grid min-[471px]:grid-cols-2'} sm:grid-cols-1 gap-2 md:gap-3  md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1`}>
+                                <div className={`max-h-full ${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'grid-cols-2 min-[1441px]:grid-cols-2' : 'min-[471px]:grid-cols-2'} grid sm:grid-cols-1 gap-2 md:gap-3 md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1`}>
                                     {showDays[index] && (
                                         day.map((lesson, lessonIndex) => {
                                             if (isDev) console.log(lesson);
