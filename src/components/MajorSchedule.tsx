@@ -322,7 +322,7 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     }, [filteredMajors, selectedYear, data]);
 
     return (
-        <div className={`relative h-[90vh] md:h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+        <div className={`relative h-[85vh] md:h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
             <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData ? (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
