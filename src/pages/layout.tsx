@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <title>AZ Essentials</title>
             </Head>
             {children}
-            <footer>
+            <footer className='bg-transparent'>
                 <span
                     onDoubleClick={() => {
                         setIsDev(true); console.log("Uruchomiono tryb developera, miłego debugowania");
@@ -41,9 +41,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     className="absolute bottom-2 right-3"
                 >
                     {currentTheme === 'dark' ? (
-                        <GoSun className="h-12 md:h-14 lg:h-16 w-auto px-1 py-1 hover:text-yellow-200 transition-colors duration-500" />
+                        <GoSun className="h-12 md:h-14 lg:h-16 w-auto text-black dark:text-white px-1 py-1 hover:text-yellow-200 transition-colors duration-500" />
                     ) : (
-                        <GoMoon className="h-12 md:h-14 lg:h-16 w-auto px-1 py-1 text-black hover:text-blue-800 transition-colors duration-500" />
+                        <GoMoon className="h-12 md:h-14 lg:h-16 w-auto px-1 py-1 text-black dark:text-white hover:text-blue-800 transition-colors duration-500" />
                     )}
                 </button>
                 {isDev && (

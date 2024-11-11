@@ -1,5 +1,9 @@
 import { GoMoon, GoSun } from 'react-icons/go';
 
+import { MdAutoFixNormal } from "react-icons/md";
+
+import { MdAutoFixOff } from "react-icons/md";
+
 // Sala
 import { FaDoorOpen } from "react-icons/fa6";
 // import { GoProjectRoadmap } from "react-icons/go";
@@ -51,6 +55,8 @@ import { IoFilter } from "react-icons/io5";
 export {
     GoMoon,
     GoSun,
+    MdAutoFixNormal,
+    MdAutoFixOff,
     FaPersonCircleQuestion,
     FaCalendarDays,
     FaDoorOpen,
@@ -71,5 +77,5 @@ export {
     FaMapMarkedAlt,
     FaToilet,
     FaBookOpen,
-    IoFilter
+    IoFilter,
 };

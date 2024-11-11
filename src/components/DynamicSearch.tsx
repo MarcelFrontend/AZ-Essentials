@@ -1,4 +1,4 @@
-// Todo: Wybierz dzisiejszy dzień i może godzine domyślnie
+// Todo: trudne: Wybierz dzisiejszy dzień i może godzine domyślnie
 import React, { useState, useEffect } from 'react';
 import ErrorModal from '@/pages/ErrorModal';
 import { useDev } from '@/contexts/DevContext';
@@ -62,9 +62,6 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
             console.clear();
             fetchData();
             resetInputs();
-            setSearchInput("");
-            setDayInput("");
-            setHoursInput("");
         }
     }, []);
 
@@ -125,7 +122,7 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                             if (searchType == 'place') {
                                 if (formatPlace(LessonTypes.place) === searchValue) {
                                     chosenTypeSet.push([LessonTypes, daysOfWeek[dayIndex]]);
-                                    console.log(majorData, daysOfWeek[dayIndex]);
+                                    if (isDev) console.log(majorData, daysOfWeek[dayIndex]);
 
                                     daysInSearchTypeSet.add(daysOfWeek[dayIndex])
                                 }
@@ -247,8 +244,8 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
     function goBack() {
         setShowResults(false);
         setResults([]);
-        // setDayInput("");
-        // setHoursInput("");
+        setDayInput("");
+        setHoursInput("");
         // setSearchInput("");
     }
 
@@ -270,8 +267,9 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                                     {LessonTypes.place}
                                 </span>
                             </div>
-                            <p className={`${searchType == "teacher" && "font-bold"}`}>{LessonTypes.teacher}
-                                <p className='font-bold'>{LessonTypes.subject}</p>
+                            <p className={`${searchType == "teacher" && "font-bold"}`}>
+                                {LessonTypes.teacher}
+                                <span className='font-bold'>{LessonTypes.subject}</span>
                             </p>
                             <div className='w-full '>
                                 <p>
@@ -303,7 +301,7 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                     </button>
                     <div
                         className={`bg-transparent shadow-[1px_2px_10px_1px_rgb(125,125,125)] dark:shadow-[1px_2px_8px_1px_rgb(10,10,10)] dark:bg-gray-900 rounded-xl py-7 px-4 md:px-7 flex items-center justify-center flex-col gap-2 ${colorsSmooth} duration-700 ${isDev && "border border-red-500"}`}>
-                        {/* Todo: resetowanie reszty pól gdy zmienia się sala */}
+                        {/* Todo: resetowanie reszty pól gdy zmienia się wprowadzana wartość */}
                         <input
                             type="text"
                             placeholder={searchType == "place" ? "Numer sali" : "Wykładowca"}
@@ -312,7 +310,14 @@ function DynamicSearch({ returnToMenu, searchType, firstTryFetchingData }: {
                             value={searchInput}
                             onChange={(e) => fetchChosenType(e.target.value)}
                         />
-                        {searchInput.length > 1 && (
+                        {searchType == "teacher" && searchInput.length > 2 && (
+                            <datalist id="suggestions">
+                                {suggestions.map((item, i) => (
+                                    <option key={i} value={item} />
+                                ))}
+                            </datalist>
+                        )}
+                        {searchType == "place" && searchInput.length > 1 && (
                             <datalist id="suggestions">
                                 {suggestions.map((item, i) => (
                                     <option key={i} value={item} />

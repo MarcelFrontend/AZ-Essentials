@@ -1,4 +1,5 @@
-// Todo: daj możliwość wpisania albo w innej formie pokazania najbliższych lekcji
+// Todo: co: daj możliwość wpisania albo w innej formie pokazania najbliższych lekcji
+// Todo: Pielęgniatstwo rok 2 niestacjonarne problem z sobotą
 import { useDev } from '@/contexts/DevContext';
 import ErrorModal from '@/pages/ErrorModal';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -24,6 +25,7 @@ import {
     FaBookOpen,
     IoFilter
 } from '@/assets/icons';
+import { IoIosInformationCircleOutline } from "react-icons/io";
 
 interface MajorScheduleProps {
     firstTryFetchingData: MajorTypes[] | null | undefined;
@@ -37,8 +39,9 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     const [searchedMajor, setSearchedMajor] = useState<string>("");
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [filteredMajors, setFilteredMajors] = useState<MajorTypes[] | undefined>(data);
-    const [devWidth, setDevWidth] = useState<number>(0)
-    const [showYearSelection, setShowYearSelection] = useState<boolean>(false)
+    const [devWidth, setDevWidth] = useState<number>(0);
+    const [showYearSelection, setShowYearSelection] = useState<boolean>(false);
+    const [suggestions, setSuggestions] = useState<string[]>()
     const { isDev } = useDev();
 
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
@@ -60,11 +63,17 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     useEffect(() => {
         console.clear();
         setDevWidth(window.innerWidth)
-
+        // if(window.innerWidth > )
         if (firstTryFetchingData) {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać");
             if (isDev) console.log(firstTryFetchingData);
             setData(firstTryFetchingData);
+            const majorNameSuggestions = new Set<string>()
+            firstTryFetchingData.map(major => {
+                if (major.name) majorNameSuggestions.add(major.name)
+            })
+            setSuggestions(Array.from(majorNameSuggestions))
+
         } else {
             const fetchData = async () => {
                 try {
@@ -75,6 +84,11 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                         return major.doc_type !== -1 && major.doc_type !== -2;
                     });
                     if (isDev) console.log(filteredData);
+                    const majorNameSuggestions = new Set<string>()
+                    filteredData.map(major => {
+                        if (major.name) majorNameSuggestions.add(major.name)
+                    })
+                    setSuggestions(Array.from(majorNameSuggestions))
 
                     setData(filteredData);
                 } catch (error) {
@@ -96,51 +110,80 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
         }
 
         if (!chosenScheduleData) return null;
-
         return (
-            <div className='w-screen h-screen'>
-                <ul className='w-full h-full grid content-start grid-cols-1 md:grid-cols-3 lg:grid-cols-5 2xl:grid-cols-6 gap-1 md:pb-0 overflow-y-hidden px-2 pt-1'>
-                    {
-                        chosenScheduleData.plan.map((day, index) => {
-                            if (typeof day == "string" || day.length == 0) return
-                            if (isDev) console.log(daysOfWeek[index], day)
-                            return (
-                                <li key={index} className={`w-full flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
-                                    <div className={`flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)] ${colorsSmooth}`}>
-                                        <label htmlFor={String(index)} className='w-full text-xl py-1 cursor-pointer '>
-                                            {daysOfWeek[index]}
-                                        </label>
-                                        <button id={String(index)} onClick={() => {
-                                            const newShowDays = [...showDays];
-                                            newShowDays[index] = !newShowDays[index];
-                                            setShowDays(newShowDays);
-                                        }}>
-                                            {showDays[index] ? <FaAngleUp className='text-4xl' /> : <FaAngleDown className='text-4xl' />}
-                                        </button>
-                                    </div>
-                                    <div className='max-h-[77%] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-2 md:gap-3 md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1 md:pb-3'>
-                                        {showDays[index] && (
-                                            day.map((lesson, index) => {
-                                                if (isDev) console.log(lesson);
-                                                return (
-                                                    <div key={index} className={`min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md  text-black dark:text-white py-2 px-2 ${colorsSmooth}`}>
-                                                        <p className='w-52 text-center'>
-                                                            {lesson.type} {lesson.name.length > 60 ? lesson.name.slice(0, 50) + "..." : lesson.name}
-                                                        </p>
-                                                        <p>{lesson.subject}</p>
-                                                        <p>{lesson.teacher}</p>
-                                                        <span>{formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}</span>
-                                                    </div>
-                                                )
-                                            })
-                                        )}
-                                    </div>
-                                </li>
-                            )
-                        })
-                    }
-                </ul>
-            </div>
+            <ul className='w-full h-full grid content-start grid-cols-1 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-1 md:pb-0 overflow-y-hidden px-2 pt-1'>
+                {
+                    // Todo: zło konieczne: Opracować algorytm, który będzie dobierać ilość kolumn w zależności od tego jaka jest szerokość urządzenia oraz ile jest dni w których są lekcje
+                    chosenScheduleData.plan.map((day, index) => {
+                        if (typeof day == "string" || day.length == 0) return
+
+                        if (isDev) console.log(daysOfWeek[index], day)
+
+                        return (
+                            <li key={index} className={`md:h-72 lg:h-80 flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
+                                <div className={`flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]`}>
+                                    <label htmlFor={String(index)} className='w-full text-xl py-1 cursor-pointer '>
+                                        {daysOfWeek[index]}
+                                    </label>
+                                    <button id={String(index)} onClick={() => {
+                                        const newShowDays = [...showDays];
+                                        newShowDays[index] = !newShowDays[index];
+                                        setShowDays(newShowDays);
+                                    }}>
+                                        {showDays[index] ? <FaAngleUp className='text-4xl' /> : <FaAngleDown className='text-4xl' />}
+                                    </button>
+                                </div>
+                                <div className='max-h-full grid grid-cols-1 min-[490px]:grid-cols-2 md:grid-cols-1 gap-2 md:gap-3 md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1'>
+                                    {showDays[index] && (
+                                        day.map((lesson, lessonIndex) => {
+                                            if (isDev) console.log(lesson);
+
+                                            return (
+                                                // <div key={lessonIndex} className='relative max-h-fit flex items-center justify-between px-2 border'>
+                                                //     <div className='h-full flex flex-col items-center justify-between border-r pr-1'>
+                                                //         <span>{formatTime(lesson.start_minute)}</span>
+                                                //         <span>{formatTime(lesson.end_minute)}</span>
+
+                                                //     </div>
+                                                //     <div className='w-full h-full flex items-start justify-start flex-col pl-1'>
+                                                //         <span>{lesson.type} {lesson.name.split(" ").map(word => {
+                                                //             if (word.length > 3) {
+                                                //                 return word.slice(0, 3) + ". "
+                                                //             } else {
+                                                //                 return word + " "
+                                                //             }
+                                                //         })}</span>
+                                                //         <span>{lesson.teacher}</span>
+                                                //         <p>{lesson.place}</p>
+                                                //     </div>
+                                                //     <IoIosInformationCircleOutline className='absolute bottom-3 right-3 text-3xl' />
+                                                // </div>
+                                                <div key={lessonIndex} className={`relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2`}>
+                                                    <p className='w-52 text-center'>
+                                                        {lesson.type}
+                                                        {/* {lesson.name.length > 45 ? lesson.name.slice(0, 40) + "..." : lesson.name} */}
+                                                        {lesson.name.split(" ").map(word => {
+                                                            if (word.length > 3) {
+                                                                return word.slice(0, 3) + ". "
+                                                            } else {
+                                                                return word + " "
+                                                            }
+                                                        })}
+                                                    </p>
+                                                    <p>{lesson.subject}</p>
+                                                    <p className='w-48'>{lesson.teacher}</p>
+                                                    <span>{formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}</span>
+                                                    <p>{lesson.place}</p>
+                                                    <IoIosInformationCircleOutline className='absolute bottom-3 right-3 text-3xl' />
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            </li >
+                        );
+                    })}
+            </ul >
         );
     }
 
@@ -148,7 +191,6 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
         setSearchedMajor(searchedMajor);
         if (searchedMajor.length >= 2) {
             const resultMajors = new Set<MajorTypes>();
-            console.log(searchedMajor);
 
             data?.forEach(major => {
                 if (major.name && major.name.toLowerCase().includes(searchedMajor.toLowerCase())) {
@@ -197,14 +239,13 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     }
 
     function getMajors(majors: MajorTypes[]) {
-        console.log(devWidth);
-        // Todo: Sortowanie, czyli na początku wyświetlą się 1 roki
+        // Todo: opcjonalne: Sortowanie, czyli na początku wyświetlą się 1 roki
         return majors.map((major, index) => {
             if (major.name && major.year && major.type && (selectedYear === null || major.year == selectedYear)) {
                 return (
                     <button onClick={() => setChosenScheduleData(major)} className={`relative h-36 w-full min-[1300px]:h-44 flex items-center justify-center flex-col gap-0.5 text-center px-2 py-1 text-black dark:text-white rounded-md shadow-[0px_2px_5px_2px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_2px_rgb(5,5,5)] ${shadowSmooth} ${isDev && devBorder} transition-colors duration-500 ${interStyles}`}
                         key={index}>
-                        <div className='absolute top-1 right-1 text-2xl md:text-4xl'>
+                        <div className='absolute top-1 right-1 text-3xl md:text-4xl'>
                             {getMajorIcon(major.name)}
                         </div>
                         <span className='absolute top-1 left-1'>
@@ -234,8 +275,8 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     }, [filteredMajors, selectedYear, data]);
 
     return (
-        <div className={`relative h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
-            <div className={`relative w-screen flex items-center py-3 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
+        <div className={`relative h-[93vh] 2xl:h-screen flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+            <div className={`relative w-screen flex items-center md:py-3 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData ? (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
                         <button
@@ -244,11 +285,18 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                             <FaAngleLeft />
                         </button>
                         <div className='w-full flex justify-center'>
-                            {/* Todo: Dodaj liste proponowanych */}
-                            <input value={searchedMajor} onChange={(e) => fetchSearchedMajor(e.target.value)} className={`w-3/4 pl-2 py-1.5 mt-2 mb-1.5 text-xl md:text-lg 2xl:text-2xl bg-transparent border-2 border-gray-700 rounded-lg outline-none focus:border-gray-200 dark:focus:border-gray-400 shadow-[inset_1px_1px_6px_1px_rgb(225,225,225)] dark:shadow-[inset_1px_1px_6px_1px_rgb(10,10,10)] text-black dark:text-white ${shadowSmooth}`} type="text" placeholder='Wpisz kierunek' />
+                            <input value={searchedMajor} onChange={(e) => fetchSearchedMajor(e.target.value)} className={`w-3/4 pl-2 py-1 md:py1.5 mt-2 mb-1.5 text-xl md:text-lg 2xl:text-2xl bg-transparent border-2 border-gray-700 rounded-lg outline-none focus:border-gray-200 dark:focus:border-gray-400 shadow-[inset_1px_1px_6px_1px_rgb(225,225,225)] dark:shadow-[inset_1px_1px_6px_1px_rgb(10,10,10)] text-black dark:text-white ${shadowSmooth}`} type="text" placeholder='Wpisz kierunek' list='suggestions' />
+                            {searchedMajor.length > 1 && (
+                                <datalist id="suggestions">
+                                    {suggestions?.map((item, i) => (
+
+                                        <option key={i} value={item} />
+                                    ))}
+                                </datalist>
+                            )}
                         </div>
                         <>
-                            <IoFilter onClick={() => setShowYearSelection(!showYearSelection)} className={`text-5xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
+                            <IoFilter onClick={() => setShowYearSelection(!showYearSelection)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
                             {showYearSelection && (
                                 <div className={`absolute right-4 top-14 flex flex-col items-center bg-white dark:bg-gray-900 z-10 p-2 rounded-xl transition-colors duration-[2s]`}>
                                     <span className={`text-2xl sm:text-3xl mb-1 text-black dark:text-white ${colorsSmooth}`}>Wybierz rok</span>
@@ -278,16 +326,33 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                         </>
                     </div>
                 ) : (
-                    <div className='w-full flex items-center justify-center'>
+                    <div className='w-full flex items-center justify-center py-3 md:py-3 '>
                         {/* ; setShowDays(Array(daysOfWeek.length).fill(false))  */}
                         <button
                             onClick={() => setChosenScheduleData(null)}
-                            className={`text-2xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`}>
+                            className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`}>
                             <FaAngleLeft />
                         </button>
                         <div className={`w-full flex items-center justify-center gap-3 text-xl`}>
                             <span className={`text-center text-black dark:text-white ${colorsSmooth}`}>
-                                {chosenScheduleData.name} {" "}
+                                {devWidth < 640 && chosenScheduleData.name ? (
+                                    <>
+                                        {chosenScheduleData.name.length > 16 ? (
+                                            chosenScheduleData.name.split(" ").map(word => {
+                                                if (word.length > 3) {
+                                                    return word.slice(0, 3) + ". "
+                                                } else return word + " "
+                                            })
+                                        ) : (
+                                            chosenScheduleData.name
+                                        )}
+                                        {" "}
+                                    </>
+                                ) : (
+                                    <>
+                                        {chosenScheduleData.name} {" "}
+                                    </>
+                                )}
                                 {chosenScheduleData.groups[0]}
                             </span>
                         </div>
