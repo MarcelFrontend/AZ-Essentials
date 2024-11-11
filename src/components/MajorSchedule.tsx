@@ -43,6 +43,7 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     const [showYearSelection, setShowYearSelection] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>()
     const { isDev } = useDev();
+    const [lessonsInCol, setLessonsInCol] = useState<number>(1);
 
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
     const [showDays, setShowDays] = useState<boolean[]>(() => {
@@ -53,12 +54,58 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
         return initialShowDays;
     });
 
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setDevWidth(width);
+
+            if (width > 768) {
+                setShowDays(Array(daysOfWeek.length).fill(true));
+            } else {
+                const todayIndex = new Date().getDay() - 1;
+                const initialShowDays = Array(daysOfWeek.length).fill(false);
+                if (todayIndex >= 0) initialShowDays[todayIndex] = true;
+                setShowDays(initialShowDays);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+
     const colorsSmooth = "transition-colors duration-75";
     const shadowSmooth = "transition-shadow duration-[1.25s] delay-300 dark:duration-1000 dark:delay-100"
     const devBorder = "border border-black dark:border-white";
     const yearSelectionEl = "px-3 py-0.5 min-[480px]:px-3 min-[480px]:py-0.5  text-lg min-[480px]:text-base rounded-md cursor-pointer bg-gray-300 dark:bg-gray-700 transition-colors duration-100";
     const interStyles = "md:hover:scale-105 md:active:scale-95 transition-all duration-75"
     const majorYears = ["1", "2", "3"];
+
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            let columns;
+            if (width < 640) {
+                columns = 1;
+            } else if (width < 768) {
+                columns = 2;
+            } else if (width < 1024) {
+                columns = 3;
+            } else if (width < 1280) {
+                columns = 4;
+            } else {
+                columns = 5;
+            }
+            setLessonsInCol(columns);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
 
     useEffect(() => {
         console.clear();
@@ -108,19 +155,21 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
         function formatTime(time: number) {
             return `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
         }
-
         if (!chosenScheduleData) return null;
+
+        const notEmptyDaysNum = chosenScheduleData.plan.filter(day => day.length > 0).length
+
+        console.log(notEmptyDaysNum);
+        if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum)
         return (
-            <ul className='w-full h-full grid content-start grid-cols-1 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 gap-1 md:pb-0 overflow-y-hidden px-2 pt-1'>
+            <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }} className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1`}>
                 {
                     // Todo: zło konieczne: Opracować algorytm, który będzie dobierać ilość kolumn w zależności od tego jaka jest szerokość urządzenia oraz ile jest dni w których są lekcje
-                    chosenScheduleData.plan.map((day, index) => {
+                    chosenScheduleData?.plan.map((day, index) => {
                         if (typeof day == "string" || day.length == 0) return
-
                         if (isDev) console.log(daysOfWeek[index], day)
-
                         return (
-                            <li key={index} className={`md:h-72 lg:h-80 flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
+                            <li key={index} className={`${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'h-full' : 'md:h-72 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
                                 <div className={`flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]`}>
                                     <label htmlFor={String(index)} className='w-full text-xl py-1 cursor-pointer '>
                                         {daysOfWeek[index]}
@@ -133,11 +182,10 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                                         {showDays[index] ? <FaAngleUp className='text-4xl' /> : <FaAngleDown className='text-4xl' />}
                                     </button>
                                 </div>
-                                <div className='max-h-full grid grid-cols-1 min-[490px]:grid-cols-2 md:grid-cols-1 gap-2 md:gap-3 md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1'>
+                                <div className={`max-h-full ${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'grid-cols-2' : 'grid min-[471px]:grid-cols-2'} sm:grid-cols-1 gap-2 md:gap-3  md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1`}>
                                     {showDays[index] && (
                                         day.map((lesson, lessonIndex) => {
                                             if (isDev) console.log(lesson);
-
                                             return (
                                                 // <div key={lessonIndex} className='relative max-h-fit flex items-center justify-between px-2 border'>
                                                 //     <div className='h-full flex flex-col items-center justify-between border-r pr-1'>
@@ -158,13 +206,13 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                                                 //     </div>
                                                 //     <IoIosInformationCircleOutline className='absolute bottom-3 right-3 text-3xl' />
                                                 // </div>
-                                                <div key={lessonIndex} className={`relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2`}>
+                                                <div key={lessonIndex} className={`relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2 xl:my-0.5`}>
                                                     <p className='w-52 text-center'>
-                                                        {lesson.type}
+                                                        {lesson.type} {" "}
                                                         {/* {lesson.name.length > 45 ? lesson.name.slice(0, 40) + "..." : lesson.name} */}
                                                         {lesson.name.split(" ").map(word => {
-                                                            if (word.length > 3) {
-                                                                return word.slice(0, 3) + ". "
+                                                            if (word.length > 7) {
+                                                                return word.slice(0, 5) + ". "
                                                             } else {
                                                                 return word + " "
                                                             }
@@ -183,8 +231,8 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                             </li >
                         );
                     })}
-            </ul >
-        );
+            </ul>
+        )
     }
 
     function fetchSearchedMajor(searchedMajor: string) {
@@ -275,10 +323,11 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
     }, [filteredMajors, selectedYear, data]);
 
     return (
-        <div className={`relative h-[93vh] 2xl:h-screen flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
-            <div className={`relative w-screen flex items-center md:py-3 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
+        <div className={`relative h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+            <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData ? (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
+                        {/* Wszysktie kierunki */}
                         <button
                             onClick={() => returnToMenu()}
                             className={`text-3xl md:text-4xl lg:text-4xl text-black dark:text-white dark:shadow-gray-600 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`}>
@@ -289,72 +338,51 @@ const MajorSchedule: React.FC<MajorScheduleProps> = ({ firstTryFetchingData, ret
                             {searchedMajor.length > 1 && (
                                 <datalist id="suggestions">
                                     {suggestions?.map((item, i) => (
-
                                         <option key={i} value={item} />
                                     ))}
                                 </datalist>
                             )}
                         </div>
-                        <>
-                            <IoFilter onClick={() => setShowYearSelection(!showYearSelection)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
-                            {showYearSelection && (
-                                <div className={`absolute right-4 top-14 flex flex-col items-center bg-white dark:bg-gray-900 z-10 p-2 rounded-xl transition-colors duration-[2s]`}>
-                                    <span className={`text-2xl sm:text-3xl mb-1 text-black dark:text-white ${colorsSmooth}`}>Wybierz rok</span>
-                                    <ul className='flex flex-col gap-2'>
-                                        <li
-                                            onClick={() => { setSelectedYear(null); setTimeout(() => { setShowYearSelection(false) }, 100) }}
-                                            className={`${yearSelectionEl} ${interStyles} 
+                        <IoFilter onClick={() => setShowYearSelection(!showYearSelection)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
+                        {showYearSelection && (
+                            <div className={`absolute right-4 top-14 flex flex-col items-center bg-white dark:bg-gray-900 z-10 p-2 rounded-xl transition-colors duration-[2s]`}>
+                                <span className={`text-2xl sm:text-3xl mb-1 text-black dark:text-white ${colorsSmooth}`}>Wybierz rok</span>
+                                <ul className='flex flex-col gap-2'>
+                                    <li
+                                        onClick={() => { setSelectedYear(null); setTimeout(() => { setShowYearSelection(false) }, 100) }}
+                                        className={`${yearSelectionEl} ${interStyles} 
                                             ${selectedYear == null ? "bg-gray-600 dark:bg-white text-white dark:text-black" : "text-black dark:text-white "}`}>
-                                            <span className={`${selectedYear == null ? "text-white dark:text-black" : "text-black dark:text-white "} text-lg sm:text-2xl`}>
-                                                Wszystkie
+                                        <span className={`${selectedYear == null ? "text-white dark:text-black" : "text-black dark:text-white "} text-lg sm:text-2xl`}>
+                                            Wszystkie
+                                        </span>
+                                    </li>
+                                    {majorYears.map((year, index) => (
+                                        <li
+                                            onClick={() => { setSelectedYear(year); setTimeout(() => { setShowYearSelection(false) }, 100) }}
+                                            key={index}
+                                            className={`${yearSelectionEl} ${interStyles} text-center 
+                                            ${selectedYear == year && "bg-gray-600 dark:bg-white"} ${colorsSmooth}`}>
+                                            <span className={`${selectedYear == year ? "text-white dark:text-black " : "text-black dark:text-white"} ${colorsSmooth}`}>
+                                                Rok {year}
                                             </span>
                                         </li>
-                                        {majorYears.map((year, index) => (
-                                            <li
-                                                onClick={() => { setSelectedYear(year); setTimeout(() => { setShowYearSelection(false) }, 100) }}
-                                                key={index}
-                                                className={`${yearSelectionEl} ${interStyles} text-center 
-                                            ${selectedYear == year && "bg-gray-600 dark:bg-white"} ${colorsSmooth}`}>
-                                                <span className={`${selectedYear == year ? "text-white dark:text-black " : "text-black dark:text-white"} ${colorsSmooth}`}>
-                                                    Rok {year}
-                                                </span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                        </>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 ) : (
-                    <div className='w-full flex items-center justify-center py-3 md:py-3 '>
+                    <div className='w-full flex items-center justify-center py-3 '>
                         {/* ; setShowDays(Array(daysOfWeek.length).fill(false))  */}
                         <button
                             onClick={() => setChosenScheduleData(null)}
                             className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`}>
                             <FaAngleLeft />
                         </button>
-                        <div className={`w-full flex items-center justify-center gap-3 text-xl`}>
-                            <span className={`text-center text-black dark:text-white ${colorsSmooth}`}>
-                                {devWidth < 640 && chosenScheduleData.name ? (
-                                    <>
-                                        {chosenScheduleData.name.length > 16 ? (
-                                            chosenScheduleData.name.split(" ").map(word => {
-                                                if (word.length > 3) {
-                                                    return word.slice(0, 3) + ". "
-                                                } else return word + " "
-                                            })
-                                        ) : (
-                                            chosenScheduleData.name
-                                        )}
-                                        {" "}
-                                    </>
-                                ) : (
-                                    <>
-                                        {chosenScheduleData.name} {" "}
-                                    </>
-                                )}
-                                {chosenScheduleData.groups[0]}
-                            </span>
+                        <div className={`w-full flex items-center justify-center gap-3 text-xl text-center text-black dark:text-white ${colorsSmooth}`}>
+                            {/* devWidth < 640 skrócić słowo */}
+                            {devWidth < 444 ? chosenScheduleData.name?.split(" ").map(word => word.length > 6 ? word.slice(0, 3) + ". " : word + " ") : chosenScheduleData.name} {" "}
+                            {chosenScheduleData.groups[0]}
                         </div>
                     </div>
                 )}
