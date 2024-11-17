@@ -1,4 +1,4 @@
-import { LessonTypes, MajorTypes } from "@/types/type";
+import { MajorTypes } from "@/types/type";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,9 +18,6 @@ export default function ChosenMajor() {
     const [lessonsInCol, setLessonsInCol] = useState<number>(1);
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const { isDev } = useDev();
-
-    const [majorName, setMajorName] = useState<string | null>("")
-    const [majorYear, setMajorYear] = useState<string | null>("")
 
     const router = useRouter()
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
@@ -104,8 +101,6 @@ export default function ChosenMajor() {
     useEffect(() => {
         const name = searchParams.get('wk');
         const year = searchParams.get('wr');
-        setMajorName(name);
-        setMajorYear(year);
 
         if (data && name && year) {
             const foundMajor = data.find(major => major.name == name && major.year == year);

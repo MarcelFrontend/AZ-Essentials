@@ -7,8 +7,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MajorTypes } from '@/types/type';
 
 import {
-    FaAngleDown,
-    FaAngleUp,
     FaAngleLeft,
     HiCommandLine,
     FaDumbbell,
