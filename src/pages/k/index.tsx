@@ -22,21 +22,25 @@ import {
     FaMapMarkedAlt,
     FaToilet,
     FaBookOpen,
-    IoFilter
+    IoFilter,
+    FaComputer,
+    FaSchool
 } from '@/assets/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 export default function MajorSchedule() {
-    const { data, setData } = useData()
+    const { data, setData } = useData();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [selectedYear, setSelectedYear] = useState<string | null>(null);
     const [searchedMajor, setSearchedMajor] = useState<string>("");
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [showYearSelection, setShowYearSelection] = useState<boolean>(false);
-    const [suggestions, setSuggestions] = useState<string[]>()
+    const [suggestions, setSuggestions] = useState<string[]>();
+    const [showFtMajors, setShowFtMajors] = useState<boolean>(true)
     const { isDev } = useDev();
-    const router = useRouter()
+    const router = useRouter();
+
 
     const colorsSmooth = "transition-colors duration-75";
     const shadowSmooth = "transition-shadow duration-[1.25s] delay-300 dark:duration-1000 dark:delay-100"
@@ -150,6 +154,7 @@ export default function MajorSchedule() {
         });
 
         return sortedMajors.map((major, index) => {
+            // Todo: dodaj wybór niestacjonarnych lub stacjonarnych
             if (major.name && major.year && major.type && (selectedYear === null || major.year == selectedYear)) {
                 return (
                     <Link
@@ -187,12 +192,13 @@ export default function MajorSchedule() {
             return getMajors(data);
         } else {
             if (isDev) console.log("To się wywoła kiedy zmienimy selectedYear:", selectedYear);
+            // Todo: Dodaj filtracje na stacjonarne i nie stacjonarne
             if (data) return getMajors(data);
         }
-    }, [data, selectedYear]);
+    }, [data, selectedYear, showFtMajors]);
 
     return (
-        <div className={`relative h-[86.7vh] md:h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+        <div className={`relative h-[87.5vh] md:h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
             <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData && (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
@@ -210,6 +216,11 @@ export default function MajorSchedule() {
                                 </datalist>
                             )}
                         </div>
+                        {showFtMajors ? (
+                            <FaComputer title='Pokaż stacjonarne' onClick={() => setShowFtMajors(false)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
+                        ) : (
+                            <FaSchool title='Pokaż niestacjonarne' onClick={() => setShowFtMajors(true)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
+                        )}
                         <IoFilter title='Wybierz rok do wyświetlenia' onClick={() => setShowYearSelection(!showYearSelection)} className={`text-3xl xl:text-4xl text-black dark:text-white transition-colors duration-100 cursor-pointer ${interStyles}`} />
                         {showYearSelection && (
                             <div className={`absolute right-4 top-14 flex flex-col items-center bg-white dark:bg-gray-900 z-10 p-2 rounded-xl transition-colors duration-[2s]`}>
@@ -241,8 +252,8 @@ export default function MajorSchedule() {
                 )}
             </div>
             {!chosenScheduleData &&
-                <div className='w-full flex items-center justify-center flex-col overflow-y-hidden sm:px-3'>
-                    <div className={`w-full min-[1300px]:w-[90vw] h-full flex items-center justify-center flex-col sm:rounded-lg overflow-hidden sm:mb-1 px-2 ${isDev && devBorder}`}>
+                <div className='w-full flex items-center justify-center flex-col overflow-y-hidden'>
+                    <div className={`w-full h-full flex items-center justify-center flex-col sm:rounded-lg overflow-hidden sm:mb-1 ${isDev && devBorder}`}>
                         {/* min-[1893px]:w-fit */}
                         <ul className={`w-full grid grid-cols-2 min-[430px]:grid-cols-2 sm:grid-cols-3 min-[886px]:grid-cols-4 min-[1060px]:grid-cols-5 place-items-center content-start gap-2 md:gap-4 px-2 mt-1 md:px-2 lg:px-3 py-2 custom-scrollbar overflow-y-auto overflow-x-hidden text-sm xl:text-base min-[1300px]:text-xl ${isDev && devBorder}`}>
                             {showMajors()}

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import ErrorModal from '@/pages/ErrorModal';
 import { useDev } from '@/contexts/DevContext';
 import { MajorTypes, LessonTypes } from '@/types/type';
-import { FaAngleLeft } from "react-icons/fa6";
+import { FaAngleLeft } from '@/assets/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
@@ -247,12 +247,12 @@ function DynamicSearch() {
 
     return (
         <div className={`h-[100vh] bg-white dark:bg-gray-900 transition-colors duration-700 overflow-y-hidden ${isDev && "border"}`}>
-            <div className={`relative h-full flex items-center justify-center flex-col gap-5 md:gap-10 ${isDev && "border border-yellow-500"}`}>
+            <div className={`relative h-full flex items-center justify-center flex-col gap-5 md:gap-10 ${isDev && "border border-black dark:border-white"}`}>
                 <Link className={`absolute -top-1 left-2 text-3xl lg:text-4xl mt-4 text-black dark:text-white dark:shadow-gray-600 p-1 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href={"/"}>
                     <FaAngleLeft />
                 </Link>
                 <div
-                    className={`bg-transparent shadow-[1px_2px_10px_1px_rgb(225,225,225)] dark:shadow-[1px_2px_8px_1px_rgb(10,10,10)] dark:bg-gray-900 rounded-xl py-7 px-4 md:px-7 flex items-center justify-center flex-col gap-2 ${colorsSmooth} duration-700 ${isDev && "border border-red-500"}`}>
+                    className={`bg-transparent shadow-[1px_2px_10px_1px_rgb(225,225,225)] dark:shadow-[1px_2px_8px_1px_rgb(10,10,10)] dark:bg-gray-900 rounded-xl py-7 px-4 md:px-7 flex items-center justify-center flex-col gap-2 ${colorsSmooth} duration-700 ${isDev && "border border-black dark:border-white"}`}>
                     {/* Todo: resetowanie reszty pól gdy zmienia się wprowadzana wartość */}
                     <input
                         type="text"

@@ -3,8 +3,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useData } from '@/contexts/DataFetchContext';
 import Link from "next/link";
-import { FaAngleLeft } from "react-icons/fa6";
-
+import { FaAngleLeft } from "@/assets/icons";
 
 export default function SearchResult() {
     const searchParams = useSearchParams();
@@ -79,6 +78,7 @@ export default function SearchResult() {
                             <p>{formatTime(lesson.start_minute)} - {formatTime(lesson.end_minute)}</p>
                         </div>
                     </li>
+                    // Todo: Dodaj przycisk to wyświetlenia wyświetlanej wartości dla każdego dnia
                 ))}
             </ul>
         </div>

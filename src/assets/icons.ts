@@ -1,7 +1,6 @@
+// settings
 import { GoMoon, GoSun } from 'react-icons/go';
-
 import { MdAutoFixNormal } from "react-icons/md";
-
 import { MdAutoFixOff } from "react-icons/md";
 
 // Sala
@@ -15,9 +14,8 @@ import { FaPersonCircleQuestion } from "react-icons/fa6";
 // Plan
 import { FaCalendarDays } from "react-icons/fa6";
 
+// Cofnij
 import { FaAngleDown } from "react-icons/fa6";
-import { FaAngleUp } from "react-icons/fa6";
-import { FaAngleLeft } from "react-icons/fa6";
 
 // My
 import { HiCommandLine } from "react-icons/hi2";
@@ -50,16 +48,36 @@ import { FaToilet } from "react-icons/fa6";
 // Filologia
 import { FaBookOpen } from "react-icons/fa6";
 
+// /k
 import { IoFilter } from "react-icons/io5";
+import { FaComputer } from "react-icons/fa6";
+import { FaSchool } from "react-icons/fa6";
+
+//  /k/wk
+import { FaRegBookmark } from "react-icons/fa6";
+import { FaBookmark } from "react-icons/fa6";
+import { FaAngleUp } from "react-icons/fa6";
+import { FaAngleLeft } from "react-icons/fa6";
+
+// main
+import { FaCog } from "react-icons/fa";
+import { FaArrowDown } from "react-icons/fa6";
+
+// d-w
 
 export {
+    // settings
+    FaCog,
     GoMoon,
     GoSun,
     MdAutoFixNormal,
     MdAutoFixOff,
-    FaPersonCircleQuestion,
-    FaCalendarDays,
+    // main
     FaDoorOpen,
+    FaCalendarDays,
+    FaPersonCircleQuestion,
+    FaArrowDown,
+    // majors
     FaAngleDown,
     FaAngleUp,
     FaAngleLeft,
@@ -77,5 +95,11 @@ export {
     FaMapMarkedAlt,
     FaToilet,
     FaBookOpen,
+    // /k
     IoFilter,
+    FaComputer,
+    FaSchool,
+    //  /k/wk
+    FaRegBookmark,
+    FaBookmark
 };

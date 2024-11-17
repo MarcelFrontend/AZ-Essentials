@@ -2,13 +2,11 @@ import { MajorTypes } from "@/types/type";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaAngleDown, FaAngleLeft, FaAngleUp } from "react-icons/fa6";
 import { useData } from "@/contexts/DataFetchContext";
 import { useDev } from "@/contexts/DevContext";
 import ErrorModal from "@/pages/ErrorModal";
-import { IoIosInformationCircleOutline } from "react-icons/io";
+import { FaAngleDown, FaAngleLeft, FaAngleUp, FaRegBookmark, FaBookmark } from "@/assets/icons";
 import { useRouter } from 'next/router';
-
 
 export default function ChosenMajor() {
     const { data, setData } = useData()
@@ -70,11 +68,10 @@ export default function ChosenMajor() {
         // if(window.innerWidth > )
         if (data) {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać:", data);
-            console.log("Dane istnieją, nie trzeba ich pobierać");
             setData(data);
         } else {
-            console.log("Pobieranie danych");
             const fetchData = async () => {
+
                 try {
                     const response = await fetch('https://maramowicz.dev/azapi/database.json');
                     if (!response.ok) throw new Error("Failed to fetch data");
@@ -105,15 +102,14 @@ export default function ChosenMajor() {
         if (data && name && year) {
             const foundMajor = data.find(major => major.name == name && major.year == year);
             if (foundMajor) {
-                console.log("Znaleziono match:", foundMajor);
                 setChosenScheduleData(foundMajor);
-            } else {
-                console.log("Nie znaleziono matcha:", name, year);
             }
-        } else {
-            console.log("Dane z linka lub baza danych nie istnieją");
-
         }
+        const todayIndex = new Date().getDay();
+        const adjustedIndex = (todayIndex === 0) ? 6 : todayIndex;
+        const updatedShowDays = Array(daysOfWeek.length).fill(false);
+        updatedShowDays[adjustedIndex] = true;
+        setShowDays(updatedShowDays);
     }, [data, searchParams]);
 
     function renderChosenSchedule() {
@@ -127,14 +123,13 @@ export default function ChosenMajor() {
         if (isDev) console.log("Nie puste dni", notEmptyDaysNum);
         if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum)
         return (
-            <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }} className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1`}>
+            <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }} className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1 ${isDev && "border border-black dark:border-white"}`}>
                 {
-                    // Todo: zło konieczne: Opracować algorytm, który będzie dobierać ilość kolumn w zależności od tego jaka jest szerokość urządzenia oraz ile jest dni w których są lekcje
                     chosenScheduleData?.plan.map((day, index) => {
                         if (!Array.isArray(day) || day.length === 0) return null
                         if (isDev) console.log(daysOfWeek[index], day)
                         return (
-                            <li key={index} className={`${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'h-full' : 'md:h-72 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
+                            <li key={index} className={`${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
                                 <div className={`flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]`}>
                                     <label htmlFor={String(index)} className='w-full text-xl py-1 cursor-pointer '>
                                         {daysOfWeek[index]}
@@ -153,29 +148,9 @@ export default function ChosenMajor() {
                                         day.map((lesson, lessonIndex) => {
                                             if (isDev) console.log("lekcja:", lesson);
                                             return (
-                                                // <div key={lessonIndex} className='relative max-h-fit flex items-center justify-between px-2 border'>
-                                                //     <div className='h-full flex flex-col items-center justify-between border-r pr-1'>
-                                                //         <span>{formatTime(lesson.start_minute)}</span>
-                                                //         <span>{formatTime(lesson.end_minute)}</span>
-
-                                                //     </div>
-                                                //     <div className='w-full h-full flex items-start justify-start flex-col pl-1'>
-                                                //         <span>{lesson.type} {lesson.name.split(" ").map(word => {
-                                                //             if (word.length > 3) {
-                                                //                 return word.slice(0, 3) + ". "
-                                                //             } else {
-                                                //                 return word + " "
-                                                //             }
-                                                //         })}</span>
-                                                //         <span>{lesson.teacher}</span>
-                                                //         <p>{lesson.place}</p>
-                                                //     </div>
-                                                //     <IoIosInformationCircleOutline className='absolute bottom-3 right-3 text-3xl' />
-                                                // </div>
                                                 <div key={lessonIndex} className={`relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2 xl:my-0.5`}>
                                                     <p className='w-52 text-center'>
                                                         {lesson.type} {" "}
-                                                        {/* {lesson.name.length > 45 ? lesson.name.slice(0, 40) + "..." : lesson.name} */}
                                                         {lesson.name.split(" ").map(word => {
                                                             if (word.length > 7) {
                                                                 return word.slice(0, 5) + ". "
@@ -188,7 +163,6 @@ export default function ChosenMajor() {
                                                     <p className='w-48'>{lesson.teacher}</p>
                                                     <span>{formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}</span>
                                                     <p>{lesson.place}</p>
-                                                    <IoIosInformationCircleOutline className='absolute bottom-3 right-3 text-3xl' />
                                                 </div>
                                             );
                                         })
@@ -201,11 +175,9 @@ export default function ChosenMajor() {
         )
     }
     return (
-        <div className="h-[83.7vh] md:h-[93vh] border">
+        <div className={`h-[85.7vh] md:h-[93vh] overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
             <div className="w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
-
                 <div className='w-full flex items-center justify-start py-3 '>
-                    {/* ; setShowDays(Array(daysOfWeek.length).fill(false))  */}
                     <Link
                         href={'/k'}
                         className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150`}>
@@ -223,7 +195,8 @@ export default function ChosenMajor() {
                         ) : null} {" "}
                         {chosenScheduleData?.groups[0].slice(3, chosenScheduleData?.groups[0].length)}
                     </div>
-
+                    <FaBookmark className="text-xl cursor-pointer" onClick={() => alert("To jeszcze nic nie robi")} />
+                    <FaRegBookmark className="text-xl cursor-pointer" onClick={() => alert("To jeszcze nic nie robi")} />
                 </div>
             </div>
             {chosenScheduleData && renderChosenSchedule()}

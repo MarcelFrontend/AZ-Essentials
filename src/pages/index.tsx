@@ -2,15 +2,29 @@ import { useEffect, useState } from "react";
 import { motion } from 'framer-motion';
 import { MajorTypes } from '@/types/type';
 import { useData } from '@/contexts/DataFetchContext';
-import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen } from '@/assets/icons'
+import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen, FaCog, GoSun, GoMoon, FaArrowDown } from '@/assets/icons'
 import { IconType } from "react-icons";
 import Link from "next/link";
+import { useTheme } from "next-themes";
+import { useDev } from "@/contexts/DevContext";
 
 function Index() {
   const { data, setData } = useData()
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [animationPreference, setAnimationPreference] = useState<boolean>(true);
   const [animShowed, setAnimShowed] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const { systemTheme, theme, setTheme } = useTheme();
+  const currentTheme = theme === 'system' ? systemTheme : theme;
+
+  const { isDev, setIsDev } = useDev();
+
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(prefersDark ? "dark" : "light");
+  }, [])
+
   const handleAnimationEnd = () => {
     setAnimShowed(true);
     sessionStorage.setItem("azAnim", 'true');
@@ -70,8 +84,8 @@ function Index() {
             onAnimationComplete={() => index == 2 && animationPreference && handleAnimationEnd()}
             className={`relative md:min-h-48 md:w-52 lg:w-72 flex items-center flex-row md:flex-col gap-2 text-center px-4 py-1.5 md:py-5 rounded-2xl md:rounded-xl transition-shadow duration-1000 delay-500 dark:duration-1000 dark:delay-100 shadow-[0px_2px_7px_1px_rgb(200,200,200)] dark:shadow-[0px_3px_3px_1px_rgb(10,10,10)] hover:bg-gray-100/75 dark:hover:bg-gray-800/50 cursor-pointer`}
           >
-            <Icon className={`text-2xl md:text-3xl text-black dark:text-white transition-colors duration-[2.25s]`} />
-            <span className={`font-bold md:text-xl text-black dark:text-white transition-colors duration-[2.25s]`}>
+            <Icon className={`text-2xl md:text-3xl text-black dark:text-white transition-colors duration-[2.25s] `} />
+            <span className={`font-bold md:text-xl text-black dark:text-white transition-colors duration-[2.25s] `}>
               {mainTask}
             </span>
             <p className={`hidden md:block w-55 text-xs md:text-sm md:leading-[19px
@@ -102,21 +116,29 @@ function Index() {
       {/* Tood opcjonalne: Tu powinien być przycisk ustawień a w nim preferencje */}
       {/* Todo opcjonalne: Mini gra */}
       {/* Todo: Pokaż za pomocą procentów poprawność danych */}
-      <div className="absolute top-3 right-4 md:right-3 flex items-center justify-center flex-row-reverse md:flex-col text-center group">
-        <button onClick={() => updateAnimationPreference()}>
-          <div className="w-fit h-fit flex items-center justify-center text-4xl text-black dark:text-white">
-            {animationPreference ? (
-              <MdAutoFixNormal title="Wyłącz animacje" />
-            ) : (
-              <MdAutoFixOff title="Włącz animacje" className="relative -left-[1.46px] -bottom-[1.46px] opacity-50" />
-            )}
-          </div>
-        </button>
-        <span className='w-24 relative top-0.5 -right-2 md:hidden text-xs md:text-sm md:opacity-0 md:group-hover:opacity-100 md:-translate-y-4 group-hover:translate-y-0 tranasition-all duration-300 delay-500 px-1 py-1'>
-          <span className={`text-gray-600 dark:text-gray-200 opacity-50 md:opacity-100 ${colorsSmooth} pointer-events-none -z-10`}>
-            Wyłącz/włącz animacje
-          </span>
-        </span>
+
+      <div className="w-10 absolute top-3 right-4 md:right-3 flex items-center flex-col gap-2">
+        <FaCog onClick={() => setShowSettings(!showSettings)} title="Preferencje" className="text-3xl text-center cursor-pointer hover:rotate-180 transition-transform text-black dark:text-white" />
+        {showSettings && (
+          <ul className="flex items-center flex-col gap-2 dark:bg-gray-950/75 p-1 rounded-lg">
+            <li onClick={() => updateAnimationPreference()}>
+              {animationPreference ? (
+                <MdAutoFixNormal title="Wyłącz animacje" className="relative -left-[1.1px] -bottom-[1.1px] text-4xl cursor-pointer text-black dark:text-white" />
+              ) : (
+                <MdAutoFixOff title="Włącz animacje" className="relative -left-[2.6px] -bottom-[2.6px] text-4xl cursor-pointer text-black dark:text-white" />
+              )}
+            </li>
+            <li
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="cursor-pointer">
+              {currentTheme === 'dark' ? (
+                <GoSun title="Włącz ciemny motyw" className="h-9 w-auto text-black dark:text-white hover:text-yellow-200 transition-colors duration-500" />
+              ) : (
+                <GoMoon title="Włącz jasny motyw" className="h-9 w-auto text-black dark:text-white hover:text-blue-800 transition-colors duration-500" />
+              )}
+            </li>
+          </ul>
+        )}
       </div>
       {(animationPreference && animShowed == false) ? (
         <motion.div
@@ -132,20 +154,20 @@ function Index() {
             duration: 1,
             ease: "easeOut",
           }}
-          className={`text-2xl md:text-3xl lg:text-5xl text-center text-black dark:text-white ${colorsSmooth}`}>
+          className={`text-2xl md:text-3xl lg:text-5xl text-center text-black dark:text-white ${colorsSmooth} select-none`}>
           Witam w
           <br />
           <b>AZ Essentials</b>
         </motion.div>
       ) : (
         <div
-          className={`text-2xl md:text-3xl lg:text-5xl text-center text-black dark:text-white`}
-        >
+          className={`text-2xl md:text-3xl lg:text-5xl text-center text-black dark:text-white select-none`}>
           Witam w
           <br />
           <b>AZ Essentials</b>
         </div>
       )}
+
       <div className="flex items-center flex-col gap-1 lg:gap-5">
         {(animationPreference && animShowed == false) ? (
           <motion.span
@@ -162,12 +184,12 @@ function Index() {
               ease: "linear",
               delay: 0.75
             }}
-            className={`text-black dark:text-white md:text-xl lg:text-2xl`}>
+            className={`text-black dark:text-white md:text-xl lg:text-2xl select-none`}>
             Co chcesz zrobić?
           </motion.span>
         ) : (
           <span
-            className={`text-black dark:text-white md:text-xl lg:text-2xl`}>
+            className={`text-black dark:text-white md:text-xl lg:text-2xl select-none`}>
             Co chcesz zrobić?
           </span>
         )}
@@ -184,31 +206,33 @@ function Index() {
           </Link>
         </ul>
       </div>
-      {(animationPreference && animShowed == false) ? (
-        <motion.span
-          initial={{
-            opacity: 0
-          }}
-          animate={{
-            opacity: isLoading ? [0, 1, 0, 0.5] : 0.25
-          }}
-          transition={{
-            duration: 2,
-            ease: 'linear'
-          }}
-          className="absolute -bottom-0.5 md:bottom-1 text-gray-500 opacity-25">
-          {isLoading && "Pobieranie danych..."}
-          {!isLoading && data && "Dane pobrano pomyślnie."}
-          {!isLoading && data === null && "Nie udało się pobrać danych."}
-        </motion.span>
-      ) : (
+      <div className="w-full absolute bottom-0">
         <span
-          className="absolute -bottom-0.5 md:bottom-1 text-gray-500 opacity-25">
-          {isLoading && "Pobieranie danych..."}
-          {!isLoading && data && "Dane pobrano pomyślnie."}
-          {!isLoading && data === null && "Nie udało się pobrać danych."}
+          onDoubleClick={() => setIsDev(!isDev)}
+          className={`absolute bottom-1 left-2 lg:text-xl leading-3 ${isDev ? "text-red-300 dark:text-red-900" : "text-gray-400 dark:text-gray-700"}`}>
+          Beta
         </span>
-      )}
+        {(animationPreference && animShowed == false) ? (
+          <motion.span
+            initial={{ translateY: 0 }}
+            animate={{
+              translateY: isLoading ? [0, -10, 1, -10, 0] : 0
+            }}
+            transition={{
+              duration: 1,
+              ease: 'linear',
+              repeat: isLoading ? Infinity : 0,
+              repeatType: "loop"
+            }}
+            className="absolute bottom-1 right-0">
+            <FaArrowDown className={`text-2xl left-1/2 -translate-x-1/2 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-900"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`} />
+          </motion.span>
+        ) : (
+          <span className="absolute bottom-1 right-0">
+            <FaArrowDown className={`text-2xl left-1/2 -translate-x-1/2 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-900"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`} />
+          </span>
+        )}
+      </div>
     </div>
   );
 }
