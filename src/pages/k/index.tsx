@@ -35,7 +35,6 @@ export default function MajorSchedule() {
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [showYearSelection, setShowYearSelection] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>()
-    const [devWidth, setDevWidth] = useState<number>(0);
     const { isDev } = useDev();
     const router = useRouter()
 
@@ -48,7 +47,6 @@ export default function MajorSchedule() {
 
     useEffect(() => {
         console.clear();
-        setDevWidth(window.innerWidth)
         // if(window.innerWidth > )
         if (data) {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać:", data);
