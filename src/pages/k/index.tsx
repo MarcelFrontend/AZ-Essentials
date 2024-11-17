@@ -196,7 +196,7 @@ export default function MajorSchedule() {
     return (
         <div className={`relative h-[86.7vh] md:h-[93vh] flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
             <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
-                {!chosenScheduleData ? (
+                {!chosenScheduleData && (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
                         {/* Wszysktie kierunki */}
                         <Link className={`text-3xl md:text-4xl lg:text-4xl text-black dark:text-white dark:shadow-gray-600 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href="/">
@@ -239,22 +239,6 @@ export default function MajorSchedule() {
                                 </ul>
                             </div>
                         )}
-                    </div>
-                ) : (
-                    <div className='w-full flex items-center justify-center py-3 '>
-                        {/* ; setShowDays(Array(daysOfWeek.length).fill(false))  */}
-                        <button
-                            onClick={() => setChosenScheduleData(null)}
-                            className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`}>
-                            <FaAngleLeft />
-                        </button>
-                        <div className={`w-full flex items-center justify-center gap-3 text-xl text-center text-black dark:text-white ${colorsSmooth}`}>
-                            {devWidth < 444 && chosenScheduleData.name ? (
-                                chosenScheduleData.name.split(" ").length > 2 ? chosenScheduleData.name.split(" ").map(word => word.length > 6 ? word.slice(0, 3) + ". " : word + " ") : chosenScheduleData.name
-                            )
-                                : chosenScheduleData.name} {" "}
-                            {chosenScheduleData.groups[0]}
-                        </div>
                     </div>
                 )}
             </div>

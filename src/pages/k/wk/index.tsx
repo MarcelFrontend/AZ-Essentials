@@ -116,7 +116,6 @@ export default function ChosenMajor() {
         }
     }, [data, searchParams]);
 
-
     function renderChosenSchedule() {
         function formatTime(time: number) {
             return `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
@@ -212,6 +211,19 @@ export default function ChosenMajor() {
                         className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150`}>
                         <FaAngleLeft />
                     </Link>
+                    <div className={`w-full flex items-center justify-center gap-3 text-xl text-center text-black dark:text-white`}>
+                        {chosenScheduleData?.name ? (
+                            devWidth < 444 ? (
+                                chosenScheduleData.name.split(" ").length > 2
+                                    ? chosenScheduleData.name.split(" ").map(word => word.length > 6 ? word.slice(0, 3) + ". " : word + " ").join("")
+                                    : chosenScheduleData.name
+                            ) : (
+                                chosenScheduleData.name
+                            )
+                        ) : null} {" "}
+                        {chosenScheduleData?.groups[0].slice(3, chosenScheduleData?.groups[0].length)}
+                    </div>
+
                 </div>
             </div>
             {chosenScheduleData && renderChosenSchedule()}
