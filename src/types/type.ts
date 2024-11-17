@@ -1,5 +1,5 @@
 export interface LessonTypes {
-    place: [];
+    place: string[];
     name: string;
     start_minute: number;
     end_minute: number;
@@ -20,10 +20,4 @@ export interface MajorTypes {
     semester: string | null;
     type: string | null;
     year: string | null;
-}
-
-export interface DynamicSearchProps {
-    returnToMenu: () => void;
-    searchType: string;
-    firstTryFetchingData?: MajorTypes[];
 }

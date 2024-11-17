@@ -3,16 +3,38 @@ import { useDev } from '@/contexts/DevContext';
 import Head from 'next/head';
 import { GoMoon, GoSun } from '@/assets/icons'
 import { useEffect } from 'react';
+import { MajorTypes } from '@/types/type';
+import { useData } from '@/contexts/DataFetchContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { isDev, setIsDev } = useDev();
+    const { data, setData } = useData()
     const { systemTheme, theme, setTheme } = useTheme();
     const currentTheme = theme === 'system' ? systemTheme : theme;
 
     useEffect(() => {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         setTheme(prefersDark ? "dark" : "light");
+    }, [])
 
+    useEffect(() => {
+        if (!data) {
+            const fetchData = async () => {
+                try {
+                    const response = await fetch('https://maramowicz.dev/azapi/database.json');
+                    if (!response.ok) throw new Error("Nie udało się pobrać danych");
+                    const jsonData: MajorTypes[] = await response.json();
+                    setData(jsonData)
+                    console.log("Po pobraniu danych:", jsonData);
+                } catch (error) {
+                    console.error(error);
+                    setData(null)
+                }
+            };
+            fetchData();
+        } else {
+            console.log("Dane istniały");
+        }
     }, [])
 
     return (
