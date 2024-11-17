@@ -201,7 +201,7 @@ export default function ChosenMajor() {
         )
     }
     return (
-        <div className="h-[86.7vh] md:h-[85vh]">
+        <div className="h-[83.7vh] md:h-[93vh] border">
             <div className="w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
 
                 <div className='w-full flex items-center justify-start py-3 '>
