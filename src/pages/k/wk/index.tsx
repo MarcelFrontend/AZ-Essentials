@@ -1,4 +1,4 @@
-import { MajorTypes } from "@/types/type";
+import { LessonTypes, MajorTypes } from "@/types/type";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -24,6 +24,7 @@ export default function ChosenMajor() {
         const initialShowDays = Array(daysOfWeek.length).fill(false);
         if (new Date().getDay() - 1 >= 0) {
             initialShowDays[new Date().getDay() - 1] = true;
+
         }
         return initialShowDays;
     });
@@ -105,75 +106,129 @@ export default function ChosenMajor() {
                 setChosenScheduleData(foundMajor);
             }
         }
-        const todayIndex = new Date().getDay();
-        const adjustedIndex = (todayIndex === 0) ? 6 : todayIndex;
+        const todayIndex = new Date().getDay() - 1;
+        // Todo: Jeśli urządzenie jest małe to pokaż tylko jednen wybrany dzień
         const updatedShowDays = Array(daysOfWeek.length).fill(false);
-        updatedShowDays[adjustedIndex] = true;
+        updatedShowDays[todayIndex] = true;
         setShowDays(updatedShowDays);
     }, [data, searchParams]);
 
     function renderChosenSchedule() {
-        function formatTime(time: number) {
-            return `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
-        }
         if (!chosenScheduleData) return null;
 
-        const notEmptyDaysNum = chosenScheduleData.plan.filter(day => day.length > 0).length
+        const formatTime = (time: number) =>
+            `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
 
-        if (isDev) console.log("Nie puste dni", notEmptyDaysNum);
-        if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum)
+        const notEmptyDaysNum = chosenScheduleData.plan.filter(day => day.length > 0).length;
+
+        if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
+        if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
+
+        function renderLesson(lesson: LessonTypes, index: number) {
+            return <div
+                key={index}
+                className="relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2 xl:my-0.5"
+            >
+                <p className="w-52 text-center">
+                    {lesson.type}{" "}
+                    {lesson.name.split(" ").map(word => (word.length > 7 ? word.slice(0, 5) + ". " : word + " "))}
+                </p>
+                <p>{lesson.subject}</p>
+                <p className="w-48">{lesson.teacher}</p>
+                <span>
+                    {formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}
+                </span>
+                <p>{lesson.place}</p>
+            </div>
+        }
+
+        function renderDayName(dayIndex: number) {
+            return <div className="flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
+                <label htmlFor={String(dayIndex)} className="w-full text-xl py-1 cursor-pointer">
+                    {daysOfWeek[dayIndex]}
+                </label>
+                <button
+                    id={String(dayIndex)}
+                    onClick={() => {
+                        const newShowDays = [...showDays];
+                        newShowDays[dayIndex] = !newShowDays[dayIndex];
+                        setShowDays(newShowDays);
+                    }}
+                >
+                    {showDays[dayIndex] ? <FaAngleUp className="text-4xl" /> : <FaAngleDown className="text-4xl" />}
+                </button>
+            </div>
+        }
+
+        function renderDay(day: LessonTypes[], dayIndex: number) {
+            if (devWidth <= 639) {
+                console.log("Mobilka");
+                if (showDays.some((day) => day == true)) {
+                    if (showDays[dayIndex]) {
+                        return <li
+                            key={dayIndex}
+                            className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                        >
+                            {renderDayName(dayIndex)}
+                            {showDays[dayIndex] && (
+                                <div
+                                    className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                                        } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
+                                >
+                                    {day.map((lesson, index) => renderLesson(lesson, index))}
+                                </div>
+                            )}
+                        </li>
+                    }
+                } else {
+                    return <li
+                        key={dayIndex}
+                        className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                    >
+                        {renderDayName(dayIndex)}
+                        {showDays[dayIndex] && (
+                            <div
+                                className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                                    } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
+                            >
+                                {day.map((lesson, index) => renderLesson(lesson, index))}
+                            </div>
+                        )}
+                    </li>
+                }
+            } else {
+                console.log("Nie mobilka");
+                return <li
+                    key={dayIndex}
+                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                >
+                    {renderDayName(dayIndex)}
+                    {showDays[dayIndex] && (
+                        <div
+                            className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                                } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
+                        >
+                            {day.map((lesson, index) => renderLesson(lesson, index))}
+                        </div>
+                    )}
+                </li>
+            }
+        }
+
         return (
-            <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }} className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1 ${isDev && "border border-black dark:border-white"}`}>
-                {
-                    chosenScheduleData?.plan.map((day, index) => {
-                        if (!Array.isArray(day) || day.length === 0) return null
-                        if (isDev) console.log(daysOfWeek[index], day)
-                        return (
-                            <li key={index} className={`${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 pt-1`}>
-                                <div className={`flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]`}>
-                                    <label htmlFor={String(index)} className='w-full text-xl py-1 cursor-pointer '>
-                                        {daysOfWeek[index]}
-                                    </label>
-                                    {/* Schowaj pozostałe dni, gdy jeden/dwa jest już otwarty */}
-                                    <button id={String(index)} onClick={() => {
-                                        const newShowDays = [...showDays];
-                                        newShowDays[index] = !newShowDays[index];
-                                        setShowDays(newShowDays);
-                                    }}>
-                                        {showDays[index] ? <FaAngleUp className='text-4xl' /> : <FaAngleDown className='text-4xl' />}
-                                    </button>
-                                </div>
-                                <div className={`max-h-full ${(notEmptyDaysNum === lessonsInCol) && devWidth > 768 ? 'grid-cols-2 min-[2222px]:grid-cols-2' : 'min-[471px]:grid-cols-2'} grid sm:grid-cols-1 gap-2 md:gap-3 md:overflow-y-auto custom-scrollbar overflow-x-hidden px-2 pb-1`}>
-                                    {showDays[index] && (
-                                        day.map((lesson, lessonIndex) => {
-                                            if (isDev) console.log("lekcja:", lesson);
-                                            return (
-                                                <div key={lessonIndex} className={`relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2 xl:my-0.5`}>
-                                                    <p className='w-52 text-center'>
-                                                        {lesson.type} {" "}
-                                                        {lesson.name.split(" ").map(word => {
-                                                            if (word.length > 7) {
-                                                                return word.slice(0, 5) + ". "
-                                                            } else {
-                                                                return word + " "
-                                                            }
-                                                        })}
-                                                    </p>
-                                                    <p>{lesson.subject}</p>
-                                                    <p className='w-48'>{lesson.teacher}</p>
-                                                    <span>{formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}</span>
-                                                    <p>{lesson.place}</p>
-                                                </div>
-                                            );
-                                        })
-                                    )}
-                                </div>
-                            </li >
-                        );
-                    })}
+            <ul
+                style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
+                className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1 pb-14 ${isDev && "border border-black dark:border-white"
+                    }`}
+            >
+                {chosenScheduleData.plan.map((day, index) => {
+                    if (!Array.isArray(day) || day.length === 0) return null;
+                    return renderDay(day, index);
+                })}
             </ul>
-        )
+        );
     }
+
     return (
         <div className={`h-screen overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
             <div className="w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">

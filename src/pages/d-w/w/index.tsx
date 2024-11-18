@@ -1,9 +1,11 @@
-import { LessonTypes } from "@/types/type";
+import { LessonTypes, MajorTypes } from "@/types/type";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useData } from '@/contexts/DataFetchContext';
 import Link from "next/link";
 import { FaAngleLeft } from "@/assets/icons";
+import { useRouter } from "next/router";
+import ErrorModal from "@/pages/ErrorModal";
 
 export default function SearchResult() {
     const searchParams = useSearchParams();
@@ -12,14 +14,15 @@ export default function SearchResult() {
     const [searchInput, setSearchInput] = useState<string | null>("");
     const [searchType, setSearchType] = useState<string | null>("");
     const [timeInput, setTimeInput] = useState<string | null>("");
-    const { data } = useData();
+    const { data, setData } = useData();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const router = useRouter()
     const daysOfWeek: string[] = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
     const colorsSmooth = "transition-colors duration-150"
 
     function performSearch() {
         const convertedTime = Number(timeInput?.split(":")[0]) * 60 + Number(timeInput?.split(":")[1]);
         const uniqueResults = new Set<LessonTypes>();
-
         if (searchInput && searchType && timeInput && dayInput) {
             data?.forEach(major => {
                 const dayIndex = daysOfWeek.indexOf(dayInput);
@@ -30,6 +33,7 @@ export default function SearchResult() {
                                 const isMatch = searchInput.split(" ").every(str => lesson.place.includes(str));
                                 if (isMatch) {
                                     uniqueResults.add(lesson);
+
                                 }
                             } else if (searchType === "t" && lesson.teacher === searchInput) {
                                 uniqueResults.add(lesson);
@@ -43,6 +47,7 @@ export default function SearchResult() {
         }
     };
 
+    // Pobieranie parametrów
     useEffect(() => {
         setSearchType(searchParams.get('sT'));
         setSearchInput(searchParams.get('v'));
@@ -51,9 +56,39 @@ export default function SearchResult() {
     }, [searchParams]);
 
     useEffect(() => {
+        if (!data) {
+            const fetchData = async () => {
+                try {
+                    const response = await fetch('https://maramowicz.dev/azapi/database.json');
+                    if (!response.ok) throw new Error("Failed to fetch data");
+                    const jsonData: MajorTypes[] = await response.json();
+                    const filteredData = jsonData.filter((major: MajorTypes) => {
+                        return major.doc_type !== -1 && major.doc_type !== -2;
+                    });
+
+                    setData(filteredData);
+                } catch (error) {
+                    console.error(error);
+                    setErrorMessage("Błąd przy pobieraniu danych.");
+                    setTimeout(() => {
+                        router.push("/")
+                    }, 2000)
+                }
+            };
+            fetchData();
+            console.log("Po pobraniu danych:", data);
+        } else {
+            console.log("Dane istniały");
+        }
+        console.clear();
+    }, []);
+
+    // Szukanie wyszukanego obiektu
+    useEffect(() => {
         if (data && searchInput && searchType && timeInput && dayInput) {
             performSearch();
         }
+
     }, [data, searchInput, searchType, timeInput, dayInput]);
 
     function formatTime(time: number) {
@@ -62,6 +97,9 @@ export default function SearchResult() {
 
     return (
         <div className="h-screen flex items-center justify-center">
+            <head>
+                <title>Wynik wyszukiwania</title>
+            </head>
             <Link className={`absolute -top-1 left-2 text-3xl lg:text-4xl mt-4 text-black dark:text-white dark:shadow-gray-600 p-1 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href={`/d-w?sT=${searchType}`}>
                 <FaAngleLeft />
             </Link>
@@ -81,6 +119,9 @@ export default function SearchResult() {
                     // Todo: Dodaj przycisk to wyświetlenia wyświetlanej wartości dla każdego dnia
                 ))}
             </ul>
+            {errorMessage && (
+                <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+            )}
         </div>
     );
 };

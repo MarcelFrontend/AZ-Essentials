@@ -241,12 +241,11 @@ function DynamicSearch() {
         }
     }
 
-    function closeErrorModal() {
-        setErrorMessage(null);
-    }
-
     return (
         <div className={`h-screen bg-white dark:bg-gray-900 transition-colors duration-700 overflow-y-hidden ${isDev && "border"}`}>
+            <head>
+                <title>Informacje o {searchType == "p" ? "sali" : "wykładowcy"}</title>
+            </head>
             <div className={`relative h-full flex items-center justify-center flex-col gap-5 md:gap-10 ${isDev && "border border-black dark:border-white"}`}>
                 <Link className={`absolute -top-1 left-2 text-3xl lg:text-4xl mt-4 text-black dark:text-white dark:shadow-gray-600 p-1 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href={"/"}>
                     <FaAngleLeft />
@@ -295,11 +294,12 @@ function DynamicSearch() {
                     <span className={`text-[32px] md:text-6xl px-7 py-1.5 rounded-lg focus:border-black focus:scale-[1.1] shadow-[0px_4px_10px_4px_rgb(150,150,150)] dark:shadow-[0px_2px_10px_2px_rgb(10,10,10)] transition-all duration-150 hover:scale-105 active:scale-100 cursor-not-allowed opacity-50 ${colorsSmooth} transition-transform`}>
                         <span className={`text-black dark:text-gray-200 ${colorsSmooth} `}>
                             Sprawdź
-                        </span></span>
+                        </span>
+                    </span>
                 ) : (
                     <Link
                         href={{
-                            pathname: '/d-w/wynik',
+                            pathname: '/d-w/w',
                             query: {
                                 sT: searchType,
                                 v: searchInput,
@@ -316,7 +316,7 @@ function DynamicSearch() {
                 )}
             </div>
             {errorMessage && (
-                <ErrorModal message={errorMessage} onClose={closeErrorModal} />
+                <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
             )}
         </div>
     );

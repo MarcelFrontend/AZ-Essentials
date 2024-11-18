@@ -113,10 +113,18 @@ function Index() {
 
   return (
     <div className="h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+      <head>
+        <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-title" content="MyWebSite" />
+        <link rel="manifest" href="/favicon/site.webmanifest" />
+        <title>AZ Essentials</title>
+      </head>
       {/* Tood opcjonalne: Tu powinien być przycisk ustawień a w nim preferencje */}
       {/* Todo opcjonalne: Mini gra */}
       {/* Todo: Pokaż za pomocą procentów poprawność danych */}
-
       <div className="w-10 absolute top-3 right-4 md:right-3 flex items-center flex-col gap-2">
         <FaCog onClick={() => setShowSettings(!showSettings)} title="Preferencje" className="text-3xl text-center cursor-pointer hover:rotate-180 transition-transform text-black dark:text-white" />
         {showSettings && (
@@ -209,7 +217,7 @@ function Index() {
       <div className="w-full absolute bottom-0">
         <span
           onDoubleClick={() => setIsDev(!isDev)}
-          className={`absolute bottom-1 left-2 lg:text-xl leading-3 ${isDev ? "text-red-300 dark:text-red-900" : "text-gray-400 dark:text-gray-700"}`}>
+          className={`absolute bottom-2 left-3 lg:text-xl leading-3 ${isDev ? "text-red-300 dark:text-red-900" : "text-gray-400 dark:text-gray-700"}`}>
           Beta
         </span>
         {(animationPreference && animShowed == false) ? (

@@ -26,21 +26,23 @@ import {
     FaComputer,
     FaSchool
 } from '@/assets/icons';
+
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { FaQuestion } from 'react-icons/fa6';
 
 export default function MajorSchedule() {
     const { data, setData } = useData();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [selectedYear, setSelectedYear] = useState<string | null>(null);
     const [searchedMajor, setSearchedMajor] = useState<string>("");
+    const [searchedMajorData, setSearchedMajorData] = useState<MajorTypes[] | null>();
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [showYearSelection, setShowYearSelection] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>();
     const [showFtMajors, setShowFtMajors] = useState<boolean>(true)
     const { isDev } = useDev();
     const router = useRouter();
-
 
     const colorsSmooth = "transition-colors duration-75";
     const shadowSmooth = "transition-shadow duration-[1.25s] delay-300 dark:duration-1000 dark:delay-100"
@@ -66,6 +68,7 @@ export default function MajorSchedule() {
                     const response = await fetch('https://maramowicz.dev/azapi/database.json');
                     if (!response.ok) throw new Error("Failed to fetch data");
                     const jsonData: MajorTypes[] = await response.json();
+                    console.log(jsonData);
                     const filteredData = jsonData.filter((major: MajorTypes) => {
                         return major.doc_type !== -1 && major.doc_type !== -2;
                     });
@@ -92,17 +95,21 @@ export default function MajorSchedule() {
 
     function fetchSearchedMajor(searchedMajor: string) {
         setSearchedMajor(searchedMajor);
+        setSearchedMajorData([])
         if (searchedMajor.length >= 2) {
             const resultMajors = new Set<MajorTypes>();
-
-            data?.forEach(major => {
-                if (major.name && major.name.toLowerCase().includes(searchedMajor.toLowerCase())) {
-                    resultMajors.add(major);
-                }
-            });
-            setData(Array.from(resultMajors));
-        } else {
-            setData([]);
+            if (data) {
+                data?.forEach(major => {
+                    if (major.name && major.name.toLowerCase().trim().includes(searchedMajor.toLowerCase().trim())) {
+                        console.log(major);
+                        resultMajors.add(major);
+                    }
+                });
+                setSearchedMajorData(Array.from(resultMajors));
+            } else {
+                console.log("Nie ma");
+                alert("Nie ma danych")
+            }
         }
     }
 
@@ -137,6 +144,7 @@ export default function MajorSchedule() {
             case "Filologia angielska":
                 return <FaBookOpen />
             default:
+                <FaQuestion />
                 break;
         }
     }
@@ -187,18 +195,22 @@ export default function MajorSchedule() {
     }
 
     const showMajors = useCallback(() => {
-        if (data && searchedMajor.length >= 2) {
-            if (isDev) console.log("To się wywoła potem");
-            return getMajors(data);
+        if (searchedMajorData && searchedMajor.length >= 2) {
+            console.log("'" + searchedMajor + "'", searchedMajor.length);
+            if (isDev) console.log("To się wywoła po zmianie searchedMajor:", data);
+            return getMajors(searchedMajorData);
         } else {
             if (isDev) console.log("To się wywoła kiedy zmienimy selectedYear:", selectedYear);
             // Todo: Dodaj filtracje na stacjonarne i nie stacjonarne
             if (data) return getMajors(data);
         }
-    }, [data, selectedYear, showFtMajors]);
+    }, [data, searchedMajorData, selectedYear, showFtMajors]);
 
     return (
         <div className={`relative h-screen flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+            <head>
+                <title>Kierunki</title>
+            </head>
             <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData && (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
