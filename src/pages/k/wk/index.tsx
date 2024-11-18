@@ -236,7 +236,7 @@ export default function ChosenMajor() {
     }
 
     return (
-        <div className={`h-[95vh] sm:h-screen overflow-hidden border-b ${isDev && "border border-black dark:border-white"}`}>
+        <div className={`h-[92vh] sm:h-screen overflow-hidden border-b ${isDev && "border border-black dark:border-white"}`}>
             <head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
             </head>
