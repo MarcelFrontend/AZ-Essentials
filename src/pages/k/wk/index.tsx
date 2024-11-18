@@ -15,6 +15,9 @@ export default function ChosenMajor() {
     const [devWidth, setDevWidth] = useState<number>(0);
     const [lessonsInCol, setLessonsInCol] = useState<number>(1);
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
+    const [searchedMajorName, setSearchedMajorName] = useState<string | null>(null)
+    const [searchedMajorYear, setSearchedMajorYear] = useState<string | null>(null)
+
     const { isDev } = useDev();
 
     const router = useRouter()
@@ -99,6 +102,9 @@ export default function ChosenMajor() {
     useEffect(() => {
         const name = searchParams.get('wk');
         const year = searchParams.get('wr');
+
+        setSearchedMajorName(name)
+        setSearchedMajorYear(year)
 
         if (data && name && year) {
             const foundMajor = data.find(major => major.name == name && major.year == year);
@@ -214,7 +220,7 @@ export default function ChosenMajor() {
                 </li>
             }
         }
-
+        
         return (
             <ul
                 style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
@@ -231,6 +237,9 @@ export default function ChosenMajor() {
 
     return (
         <div className={`h-screen overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
+            <head>
+                <title>{searchedMajorName} {searchedMajorYear} rok</title>
+            </head>
             <div className="w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
                 <div className='w-full flex items-center justify-start py-3 '>
                     <Link
