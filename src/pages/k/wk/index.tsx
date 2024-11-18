@@ -224,7 +224,7 @@ export default function ChosenMajor() {
         return (
             <ul
                 style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-                className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 pt-1 pb-14 ${isDev && "border border-black dark:border-white"
+                className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 ${isDev && "border border-black dark:border-white"
                     }`}
             >
                 {chosenScheduleData.plan.map((day, index) => {
@@ -236,7 +236,7 @@ export default function ChosenMajor() {
     }
 
     return (
-        <div className={`h-screen overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
+        <div className={`h-[98vh] sm:h-screen overflow-hidden border-b ${isDev && "border border-black dark:border-white"}`}>
             <head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
             </head>
