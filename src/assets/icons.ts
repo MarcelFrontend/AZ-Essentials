@@ -98,6 +98,7 @@ export {
     FaMapMarkedAlt,
     FaToilet,
     FaBookOpen,
+    FaQuestion,
     // /k
     IoFilter,
     FaComputer,
