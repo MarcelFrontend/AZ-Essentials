@@ -112,7 +112,7 @@ function Index() {
   }
 
   return (
-    <div className="h-[92vh] sm:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       {/* Tood opcjonalne: Tu powinien być przycisk ustawień a w nim preferencje */}
       {/* Todo opcjonalne: Mini gra */}
       {/* Todo: Pokaż za pomocą procentów poprawność danych */}

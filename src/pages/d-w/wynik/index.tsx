@@ -61,7 +61,7 @@ export default function SearchResult() {
     }
 
     return (
-        <div className="h-[91vh] md:h-[92vh] flex items-center justify-center">
+        <div className="h-screen flex items-center justify-center">
             <Link className={`absolute -top-1 left-2 text-3xl lg:text-4xl mt-4 text-black dark:text-white dark:shadow-gray-600 p-1 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href={`/d-w?sT=${searchType}`}>
                 <FaAngleLeft />
             </Link>

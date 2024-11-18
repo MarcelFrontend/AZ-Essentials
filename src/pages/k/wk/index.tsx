@@ -175,7 +175,7 @@ export default function ChosenMajor() {
         )
     }
     return (
-        <div className={`h-[85.7vh] md:h-[93vh] overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
+        <div className={`h-screen overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
             <div className="w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
                 <div className='w-full flex items-center justify-start py-3 '>
                     <Link
