@@ -239,7 +239,7 @@ export default function MajorSchedule() {
                             <FaAngleLeft />
                         </Link>
                         <div className='w-full flex justify-center'>
-                            <input value={searchedMajor} onChange={(e) => fetchSearchedMajor(e.target.value)} className={`w-3/4 pl-2 py-1 md:py1.5 mt-2 mb-1.5 text-sm md:text-sm 2xl:text-2xl bg-transparent border-2 border-gray-700 rounded-md outline-none focus:border-gray-200 dark:focus:border-gray-400 shadow-[inset_1px_1px_6px_1px_rgb(225,225,225)] dark:shadow-[inset_1px_1px_6px_1px_rgb(10,10,10)] text-black dark:text-white ${shadowSmooth}`} type="text" placeholder='Wpisz kierunek' list='suggestions' />
+                            <input value={searchedMajor} onChange={(e) => fetchSearchedMajor(e.target.value)} className={`w-3/4 pl-2 py-1 md:py1.5 mt-2 mb-1.5 text-lg md:text-sm 2xl:text-2xl bg-transparent border-2 border-gray-700 rounded-md outline-none focus:border-gray-200 dark:focus:border-gray-400 shadow-[inset_1px_1px_6px_1px_rgb(225,225,225)] dark:shadow-[inset_1px_1px_6px_1px_rgb(10,10,10)] text-black dark:text-white ${shadowSmooth}`} type="text" placeholder='Wpisz kierunek' list='suggestions' />
                             {searchedMajor.length > 1 && (
                                 <datalist id="suggestions">
                                     {suggestions?.map((item, i) => (

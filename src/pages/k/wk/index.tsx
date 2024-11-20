@@ -165,7 +165,7 @@ export default function ChosenMajor() {
                     if (showDays[dayIndex]) {
                         return <li
                             key={dayIndex}
-                            className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-[22rem] lg:h-[30rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                            className={`${(notEmptyDaysNum === lessonsInCol) ? 'h-full' : 'h-[99%] md:h-[22rem] lg:h-[30rem] xl:h-96'} flex flex-col gap-1  transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                         >
                             {renderDayName(dayIndex)}
                             {showDays[dayIndex] && (
@@ -256,7 +256,7 @@ export default function ChosenMajor() {
     }
 
     return (
-        <div className={`h-[92vh] sm:h-[99vh] overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
+        <div className={`h-[92vh] sm:h-[99vh] overflow-hidden pb-12 ${isDev && "border border-black dark:border-white"}`}>
             <head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
             </head>
