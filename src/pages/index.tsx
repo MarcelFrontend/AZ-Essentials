@@ -246,15 +246,15 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <div className="w-full absolute bottom-0">
+      <div className="w-full flex items-center justify-between absolute bottom-0 bg-red-500">
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); console.log("Tryb developera:", !isDev);
           }}
-          className={`absolute bottom-2 left-3 lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
+          className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className="absolute right-3 bottom-2 text-3xl cursor-pointer z-10" />
+        {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10" />
         }
       </div>
       {showSaved && isSaved &&
