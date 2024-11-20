@@ -49,7 +49,7 @@ export default function SearchResult() {
 
     // Pobieranie parametrów
     useEffect(() => {
-        setSearchType(searchParams.get('sT'));
+        setSearchType(searchParams.get('t'));
         setSearchInput(searchParams.get('v'));
         setDayInput(searchParams.get('d'));
         setTimeInput(searchParams.get('h'));

@@ -17,6 +17,8 @@ export default function ChosenMajor() {
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [searchedMajorName, setSearchedMajorName] = useState<string | null>(null)
     const [searchedMajorYear, setSearchedMajorYear] = useState<string | null>(null)
+    const [searchedMajorType, setSearchedMajorType] = useState<string | null>(null)
+    const [isSaved, setIsSaved] = useState<boolean>(false)
 
     const { isDev } = useDev();
 
@@ -31,6 +33,15 @@ export default function ChosenMajor() {
         }
         return initialShowDays;
     });
+
+    // getting isSaved
+    useEffect(() => {
+        if (localStorage.getItem("az-saved")) {
+            setIsSaved(true)
+        } else {
+            setIsSaved(false)
+        }
+    }, [])
 
     // risizing
     useEffect(() => {
@@ -69,7 +80,6 @@ export default function ChosenMajor() {
     useEffect(() => {
         console.clear();
         setDevWidth(window.innerWidth)
-        // if(window.innerWidth > )
         if (data) {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać:", data);
             setData(data);
@@ -100,14 +110,16 @@ export default function ChosenMajor() {
 
     // getting params
     useEffect(() => {
-        const name = searchParams.get('wk');
-        const year = searchParams.get('wr');
+        const name = searchParams.get('k');
+        const year = searchParams.get('r');
+        const type = searchParams.get('t');
 
         setSearchedMajorName(name)
         setSearchedMajorYear(year)
+        setSearchedMajorType(type)
 
         if (data && name && year) {
-            const foundMajor = data.find(major => major.name == name && major.year == year);
+            const foundMajor = data.find(major => major.name == name && major.year == year && major.type == type);
             if (foundMajor) {
                 setChosenScheduleData(foundMajor);
             }
@@ -121,7 +133,6 @@ export default function ChosenMajor() {
 
     function renderChosenSchedule() {
         if (!chosenScheduleData) return null;
-
         const formatTime = (time: number) =>
             `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
 
@@ -130,26 +141,8 @@ export default function ChosenMajor() {
         if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
         if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
 
-        function renderLesson(lesson: LessonTypes, index: number) {
-            return <div
-                key={index}
-                className="relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2 xl:my-0.5"
-            >
-                <p className="w-52 text-center">
-                    {lesson.type}{" "}
-                    {lesson.name.split(" ").map(word => (word.length > 7 ? word.slice(0, 5) + ". " : word + " "))}
-                </p>
-                <p>{lesson.subject}</p>
-                <p className="w-48">{lesson.teacher}</p>
-                <span>
-                    {formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}
-                </span>
-                <p>{lesson.place}</p>
-            </div>
-        }
-
         function renderDayName(dayIndex: number) {
-            return <div className="flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
+            return <div className="flex px-2 py-1 text-black dark:text-white border dark:border-gray-950 rounded-lg shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
                 <label htmlFor={String(dayIndex)} className="w-full text-xl py-1 cursor-pointer">
                     {daysOfWeek[dayIndex]}
                 </label>
@@ -168,12 +161,11 @@ export default function ChosenMajor() {
 
         function renderDay(day: LessonTypes[], dayIndex: number) {
             if (devWidth <= 639) {
-                console.log("Mobilka");
                 if (showDays.some((day) => day == true)) {
                     if (showDays[dayIndex]) {
                         return <li
                             key={dayIndex}
-                            className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                            className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-[22rem] lg:h-[30rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                         >
                             {renderDayName(dayIndex)}
                             {showDays[dayIndex] && (
@@ -203,10 +195,9 @@ export default function ChosenMajor() {
                     </li>
                 }
             } else {
-                console.log("Nie mobilka");
                 return <li
                     key={dayIndex}
-                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                 >
                     {renderDayName(dayIndex)}
                     {showDays[dayIndex] && (
@@ -220,7 +211,24 @@ export default function ChosenMajor() {
                 </li>
             }
         }
-        
+
+        function renderLesson(lesson: LessonTypes, index: number) {
+            return <div
+                key={index}
+                className="relative min-h-40 flex items-center text-center justify-center flex-col shadow-[0px_2px_10px_1px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_1px_rgb(10,10,10)] rounded-md text-black dark:text-white py-2 px-2 xl:my-0.5"
+            >
+                <p className="w-52 text-center">
+                    {lesson.type}{" "}
+                    {lesson.name.split(" ").map(word => (word.length > 7 ? word.slice(0, 5) + ". " : word + " "))}
+                </p>
+                <p>{lesson.subject}</p>
+                <p className="w-48">{lesson.teacher}</p>
+                <span>
+                    {formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}
+                </span>
+                <p>{lesson.place}</p>
+            </div>
+        }
         return (
             <ul
                 style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
@@ -235,13 +243,25 @@ export default function ChosenMajor() {
         );
     }
 
+    function toggleSave() {
+        const saved = !isSaved
+        setIsSaved(() => saved)
+        if (saved) {
+            localStorage.setItem("az-saved", `${searchedMajorName}&${searchedMajorYear}&${searchedMajorType}`)
+            console.log("Zapisano", localStorage.getItem("az-saved"));
+        } else {
+            localStorage.removeItem("az-saved")
+            console.log("Usunięto", localStorage.getItem("az-saved"));
+        }
+    }
+
     return (
-        <div className={`h-[92vh] sm:h-screen overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
+        <div className={`h-[92vh] sm:h-[99vh] overflow-hidden ${isDev && "border border-black dark:border-white"}`}>
             <head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
             </head>
-            <div className="w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
-                <div className='w-full flex items-center justify-start py-3 '>
+            <div className="w-screen flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
+                <div className='w-full flex items-center justify-start py-3'>
                     <Link
                         href={'/k'}
                         className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150`}>
@@ -259,8 +279,11 @@ export default function ChosenMajor() {
                         ) : null} {" "}
                         {chosenScheduleData?.groups[0].slice(3, chosenScheduleData?.groups[0].length)}
                     </div>
-                    <FaBookmark className="text-xl cursor-pointer" onClick={() => alert("To jeszcze nic nie robi")} />
-                    <FaRegBookmark className="text-xl cursor-pointer" onClick={() => alert("To jeszcze nic nie robi")} />
+                    {isSaved ?
+                        <FaBookmark className="text-xl cursor-pointer" onClick={() => toggleSave()} />
+                        :
+                        <FaRegBookmark className="text-xl cursor-pointer" onClick={() => toggleSave()} />
+                    }
                 </div>
             </div>
             {chosenScheduleData && renderChosenSchedule()}

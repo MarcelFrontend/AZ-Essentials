@@ -38,12 +38,13 @@ function DynamicSearch() {
         setHoursInput('');
     }
 
+    // getting params
     useEffect(() => {
-        const searchType = searchParams.get("sT");
-        console.log("Parametr sT:", searchType);
+        const searchType = searchParams.get("t");
         setSearchType(searchType);
     }, [searchParams]);
 
+    // fetching data 
     useEffect(() => {
         if (!data) {
             const fetchData = async () => {
@@ -73,7 +74,7 @@ function DynamicSearch() {
         console.clear();
         resetInputs();
     }, []);
-
+    // suggestions
     useEffect(() => {
         const chosenTypeSet = new Set<string>();
         if (data) {
@@ -301,7 +302,7 @@ function DynamicSearch() {
                         href={{
                             pathname: '/d-w/w',
                             query: {
-                                sT: searchType,
+                                t: searchType,
                                 v: searchInput,
                                 d: dayInput,
                                 h: hoursInput,

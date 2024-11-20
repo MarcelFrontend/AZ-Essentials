@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { motion } from 'framer-motion';
 import { MajorTypes } from '@/types/type';
 import { useData } from '@/contexts/DataFetchContext';
-import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen, FaCog, GoSun, GoMoon, FaArrowDown } from '@/assets/icons'
+import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen, FaCog, GoSun, GoMoon } from '@/assets/icons'
 import { IconType } from "react-icons";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useDev } from "@/contexts/DevContext";
+import { BsBookmarkCheckFill } from "react-icons/bs";
+import ScheduleModal from "./ScheduleModal";
 
 function Index() {
   const { data, setData } = useData()
@@ -16,18 +18,49 @@ function Index() {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
-
+  const [isSaved, setIsSaved] = useState<string>("");
+  const [showSaved, setShowSaved] = useState<boolean>(false);
   const { isDev, setIsDev } = useDev();
+  const [savedMajorSchedule, setSavedMajorSchedule] = useState<MajorTypes | undefined>()
 
+  const colorsSmooth = "transition-colors duration-100";
 
+  // get saved item
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setTheme(prefersDark ? "dark" : "light");
+    if (sessionStorage.getItem("azAnim")) {
+      setAnimShowed(true)
+    }
+    const savedItem = localStorage.getItem("az-saved");
+    if (savedItem) {
+      setIsSaved(savedItem);
+      const params = savedItem.split("&")
+      data?.map(major => {
+        if (major.name == params[0] && major.year == params[1] && major.type == params[2]) {
+          setSavedMajorSchedule(major)
+        }
+      })
+    }
   }, [])
+
+  useEffect(() => {
+    const savedItem = localStorage.getItem("az-saved");
+    if (savedItem) {
+      setIsSaved(savedItem);
+      const params = savedItem.split("&")
+      data?.map(major => {
+        if (major.name == params[0] && major.year == params[1] && major.type == params[2]) {
+          setSavedMajorSchedule(major)
+        }
+      })
+    }
+  }, [data])
 
   const handleAnimationEnd = () => {
     setAnimShowed(true);
     sessionStorage.setItem("azAnim", 'true');
+
   };
 
   function updateAnimationPreference() {
@@ -36,13 +69,12 @@ function Index() {
     localStorage.setItem("az-anim", String(newAnimationPreference));
   }
 
-  const colorsSmooth = "transition-colors duration-100";
-
+  // fetching data, anim preference
   useEffect(() => {
     console.clear();
     const animationPreference = localStorage.getItem("az-anim");
 
-    if (animationPreference === 'false') {
+    if (animationPreference == 'false') {
       setAnimationPreference(false);
     } else {
       setAnimationPreference(true);
@@ -55,7 +87,7 @@ function Index() {
           if (!response.ok) throw new Error("Nie udało się pobrać danych");
           const jsonData: MajorTypes[] = await response.json();
           setData(jsonData)
-          console.log("Po pobraniu danych:", jsonData);
+          console.log("Dane zostały pobrane");
         } catch (error) {
           console.error(error);
           setData(null)
@@ -112,7 +144,7 @@ function Index() {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="relative h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       <head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -203,10 +235,10 @@ function Index() {
         )}
         <ul
           className={`flex flex-col md:flex-row gap-5 py-3 pr-1 ${colorsSmooth}`}>
-          <Link href="d-w?sT=p">
+          <Link href="d-w?t=p">
             <ListEl icon={FaDoorOpen} mainTask="Wyświetl info o sali" taskDesc="Podaj numer sali, dzień i godzinę, aby sprawdzić, jakie zajęcia się odbędą." index={0} />
           </Link>
-          <Link href="d-w?sT=t">
+          <Link href="d-w?t=t">
             <ListEl icon={FaPersonCircleQuestion} mainTask="Znajdź wykładowcę" taskDesc="Podaj imię, dzień i godzinę, aby zobaczyć, gdzie dany wykładowca ma zajęcia." index={1} />
           </Link>
           <Link href="k">
@@ -216,31 +248,20 @@ function Index() {
       </div>
       <div className="w-full absolute bottom-0">
         <span
-          onDoubleClick={() => setIsDev(!isDev)}
-          className={`absolute bottom-2 left-3 lg:text-xl leading-3 ${isDev ? "text-red-300 dark:text-red-900" : "text-gray-400 dark:text-gray-700"}`}>
+          onDoubleClick={() => {
+            setIsDev(!isDev); console.log("Tryb developera:", !isDev);
+          }}
+          className={`absolute bottom-2 left-3 lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        {(animationPreference && animShowed == false) ? (
-          <motion.span
-            initial={{ translateY: 0 }}
-            animate={{
-              translateY: isLoading ? [0, -10, 1, -10, 0] : 0
-            }}
-            transition={{
-              duration: 1,
-              ease: 'linear',
-              repeat: isLoading ? Infinity : 0,
-              repeatType: "loop"
-            }}
-            className="absolute bottom-1 right-0">
-            <FaArrowDown className={`text-2xl left-1/2 -translate-x-1/2 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-900"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`} />
-          </motion.span>
-        ) : (
-          <span className="absolute bottom-1 right-0">
-            <FaArrowDown className={`text-2xl left-1/2 -translate-x-1/2 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-900"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`} />
-          </span>
-        )}
+        {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className="absolute right-3 bottom-2 text-3xl cursor-pointer z-10" />
+        }
       </div>
+      {showSaved && isSaved &&
+        <div className="fixed inset-0 bg-black bg-opacity-50 p-10">
+          <ScheduleModal data={savedMajorSchedule} />
+        </div>
+      }
     </div>
   );
 }

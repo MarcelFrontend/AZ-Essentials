@@ -64,7 +64,6 @@ import { FaAngleLeft } from "react-icons/fa6";
 
 // main
 import { FaCog } from "react-icons/fa";
-import { FaArrowDown } from "react-icons/fa6";
 
 // d-w
 
@@ -79,7 +78,6 @@ export {
     FaDoorOpen,
     FaCalendarDays,
     FaPersonCircleQuestion,
-    FaArrowDown,
     // majors
     FaAngleDown,
     FaAngleUp,
