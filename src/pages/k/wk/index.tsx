@@ -165,7 +165,7 @@ export default function ChosenMajor() {
                     if (showDays[dayIndex]) {
                         return <li
                             key={dayIndex}
-                            className={`${(notEmptyDaysNum === lessonsInCol) ? 'h-full' : 'h-[99%] md:h-[22rem] lg:h-[30rem] xl:h-96'} flex flex-col gap-1  transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                            className={`${(notEmptyDaysNum === lessonsInCol) ? 'h-full' : 'h-full md:h-[22rem] lg:h-[30rem] xl:h-96 pb-3'} flex flex-col gap-1  transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                         >
                             {renderDayName(dayIndex)}
                             {showDays[dayIndex] && (

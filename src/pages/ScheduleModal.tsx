@@ -160,9 +160,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
     if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
 
     return (
-        <ul
-            style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
+        <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}>
             {data.plan.map((day, index) => {
                 if (!Array.isArray(day) || day.length === 0) return null;
                 return renderDay(day, index);

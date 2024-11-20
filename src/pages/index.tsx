@@ -257,8 +257,10 @@ function Index() {
         }
       </footer>
       {showSaved && isSaved &&
-        <div className="fixed inset-0 bg-black bg-opacity-50 p-10">
-          <ScheduleModal data={savedMajorSchedule} />
+        <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 p-10">
+          <div onClick={(e) => e.stopPropagation()} className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
+            <ScheduleModal data={savedMajorSchedule} />
+          </div>
         </div>
       }
     </div>
