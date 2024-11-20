@@ -144,7 +144,7 @@ function Index() {
   }
 
   return (
-    <div className="relative h-[92vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden bg-black">
+    <div className="relative h-[93vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       <head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />

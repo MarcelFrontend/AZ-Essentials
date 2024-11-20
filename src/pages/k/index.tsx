@@ -48,12 +48,12 @@ export default function MajorSchedule() {
     const colorsSmooth = "transition-colors duration-75";
     const shadowSmooth = "transition-shadow duration-[1.25s] delay-300 dark:duration-1000 dark:delay-100"
     const devBorder = "border border-black dark:border-white";
-    const yearSelectionEl = "text-sm min-[480px]:text-base rounded-md cursor-pointer bg-gray-300 dark:bg-gray-700 transition-colors duration-100";
+    const yearSelectionEl = "rounded-md cursor-pointer bg-gray-300 dark:bg-gray-700 transition-colors duration-100";
     const interStyles = "md:hover:scale-105 md:active:scale-95 transition-all duration-75"
     const majorYears = ["1", "2", "3"];
     const mjStyles = `flex items-center gap-2 bg-gray-700 outline-none px-2 rounded-md ${interStyles}`
     const mTBtnStyles = 'hidden md:block text-4xl xl:text-5xl text-black dark:text-white transition-colors duration-100 cursor-pointer'
-    const mTTStyles = 'text-xl md:text-sm px-2 py-0.5 rounded-md text-black dark:text-white'
+    const mTTStyles = 'text-2xl md:text-sm px-2 py-0.5 rounded-md text-black dark:text-white'
 
     // fetching data
     useEffect(() => {
@@ -258,7 +258,7 @@ export default function MajorSchedule() {
                                             onClick={() => { setSelectedYear(null); setTimeout(() => { setShowFilterSettings(false) }, 100) }}
                                             className={`${yearSelectionEl} ${interStyles} 
                                             ${selectedYear == null ? "bg-gray-600 dark:bg-white text-white dark:text-black" : "text-black dark:text-white "}`}>
-                                            <span className={`${selectedYear == null ? "text-white dark:text-black" : "text-black dark:text-white "} text-sm sm:text-2xl flex justify-center`}>
+                                            <span className={`${selectedYear == null ? "text-white dark:text-black" : "text-black dark:text-white "} text-2xl flex justify-center`}>
                                                 Wszystkie
                                             </span>
                                         </li>
@@ -269,7 +269,7 @@ export default function MajorSchedule() {
                                                     key={index}
                                                     className={`${yearSelectionEl} ${interStyles} text-center w-full py-[3px]
                                             ${selectedYear == year && "bg-gray-600 dark:bg-white"} ${colorsSmooth}`}>
-                                                    <span className={`${selectedYear == year ? "text-white dark:text-black " : "text-black dark:text-white"} ${colorsSmooth}`}>
+                                                    <span className={`${selectedYear == year ? "text-white dark:text-black " : "text-black dark:text-white"} ${colorsSmooth} text-xl`}>
                                                         {year}
                                                     </span>
                                                 </li>
