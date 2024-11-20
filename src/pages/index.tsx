@@ -246,7 +246,7 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <div className="w-full flex items-center justify-between absolute bottom-2 px-4">
+      <div className="w-full flex items-center justify-between absolute bottom-20 px-4">
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); console.log("Tryb developera:", !isDev);
