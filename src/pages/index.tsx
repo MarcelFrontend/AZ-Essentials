@@ -245,7 +245,7 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <div className="w-full flex items-center justify-between absolute bottom-2 px-4">
+      <footer className="w-full flex items-center justify-between absolute bottom-2 px-4">
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); console.log("Tryb developera:", !isDev);
@@ -255,7 +255,7 @@ function Index() {
         </span>
         {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10" />
         }
-      </div>
+      </footer>
       {showSaved && isSaved &&
         <div className="fixed inset-0 bg-black bg-opacity-50 p-10">
           <ScheduleModal data={savedMajorSchedule} />
