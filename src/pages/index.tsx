@@ -144,7 +144,7 @@ function Index() {
   }
 
   return (
-    <div className="relative h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="relative h-[92vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden bg-black">
       <head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -207,7 +207,6 @@ function Index() {
           <b>AZ Essentials</b>
         </div>
       )}
-
       <div className="flex items-center flex-col gap-1 lg:gap-5">
         {(animationPreference && animShowed == false) ? (
           <motion.span
@@ -246,7 +245,7 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <div className="w-full flex items-center justify-between absolute bottom-20 px-4">
+      <div className="w-full flex items-center justify-between absolute bottom-2 px-4">
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); console.log("Tryb developera:", !isDev);
