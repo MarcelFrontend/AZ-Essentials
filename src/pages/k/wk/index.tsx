@@ -260,11 +260,11 @@ export default function ChosenMajor() {
             <head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
             </head>
-            <div className="w-screen flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
-                <div className='w-full flex items-center justify-start py-3'>
+            <div className="relative w-screen h-14 flex items-center md:py-0 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
+                <div className='w-full flex items-center justify-start py-2'>
                     <Link
                         href={'/k'}
-                        className={`text-3xl md:text-3xl lg:text-4xl text-black dark:text-white  hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150`}>
+                        className={`text-3xl sm:text-4xl text-black dark:text-white dark:shadow-gray-600 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150`}>
                         <FaAngleLeft />
                     </Link>
                     <div className={`w-full flex items-center justify-center gap-3 text-xl text-center text-black dark:text-white`}>
@@ -280,9 +280,9 @@ export default function ChosenMajor() {
                         {chosenScheduleData?.groups[0].slice(3, chosenScheduleData?.groups[0].length)}
                     </div>
                     {isSaved ?
-                        <FaBookmark className="text-xl cursor-pointer" onClick={() => toggleSave()} />
+                        <FaBookmark className="text-xl md:text-3xl cursor-pointer" onClick={() => toggleSave()} />
                         :
-                        <FaRegBookmark className="text-xl cursor-pointer" onClick={() => toggleSave()} />
+                        <FaRegBookmark className="text-xl md:text-3xl cursor-pointer" onClick={() => toggleSave()} />
                     }
                 </div>
             </div>

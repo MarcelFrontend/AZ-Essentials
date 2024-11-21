@@ -184,7 +184,7 @@ export default function MajorSchedule() {
                     <span className='absolute top-1 left-1'>
                         {major.groups[0]}
                     </span>
-                    <span className='w-[90%] min-[1300px]:w-full'>
+                    <span className='w-[90%] min-[1300px]:w-[60%]'>
                         {major.name}
                     </span>
                     <span>
@@ -232,14 +232,14 @@ export default function MajorSchedule() {
             <head>
                 <title>Kierunki</title>
             </head>
-            <div className={`relative w-screen h-fit flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
+            <div className={`relative w-screen h-14 flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData && (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>
                         <Link className={`text-3xl md:text-4xl sm:text-4xl text-black dark:text-white dark:shadow-gray-600 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href="/">
                             <FaAngleLeft />
                         </Link>
                         <div className='w-full flex justify-center'>
-                            <input value={searchedMajor} onChange={(e) => fetchSearchedMajor(e.target.value)} className={`w-3/4 pl-2 py-1 md:py1.5 mt-2 mb-1.5 text-lg md:text-sm 2xl:text-2xl bg-transparent border-2 border-gray-700 rounded-md outline-none focus:border-gray-200 dark:focus:border-gray-400 shadow-[inset_1px_1px_6px_1px_rgb(225,225,225)] dark:shadow-[inset_1px_1px_6px_1px_rgb(10,10,10)] text-black dark:text-white ${shadowSmooth}`} type="text" placeholder='Wpisz kierunek' list='suggestions' />
+                            <input value={searchedMajor} onChange={(e) => fetchSearchedMajor(e.target.value)} className={`w-3/4 pl-2 py-1 md:py1.5 mt-2 mb-1.5 text-lg md:text-xl 2xl:text-2xl bg-transparent border-2 border-gray-700 rounded-md outline-none focus:border-gray-200 dark:focus:border-gray-400 shadow-[inset_1px_1px_6px_1px_rgb(225,225,225)] dark:shadow-[inset_1px_1px_6px_1px_rgb(10,10,10)] text-black dark:text-white ${shadowSmooth}`} type="text" placeholder='Wpisz kierunek' list='suggestions' />
                             {searchedMajor.length > 1 && (
                                 <datalist id="suggestions">
                                     {suggestions?.map((item, i) => (

@@ -88,7 +88,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
                         {renderDayName(dayIndex)}
                         {showDays[dayIndex] && (
                             <div
-                                className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                                className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[500px]:grid-cols-2'
                                     } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
                             >
                                 {day.map((lesson, index) => renderLesson(lesson, index))}
@@ -140,7 +140,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
                 {lesson.name.split(" ").map(word => (word.length > 7 ? word.slice(0, 5) + ". " : word + " "))}
             </p>
             <p>{lesson.subject}</p>
-            <p className="w-48">{lesson.teacher}</p>
+            <p className="w-40 md:w-48">{lesson.teacher}</p>
             <span>
                 {formatTime(lesson.start_minute)}-{formatTime(lesson.end_minute)}
             </span>
@@ -160,7 +160,9 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
     if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
 
     return (
-        <ul style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}>
+        <ul
+            style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
+            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
             {data.plan.map((day, index) => {
                 if (!Array.isArray(day) || day.length === 0) return null;
                 return renderDay(day, index);
