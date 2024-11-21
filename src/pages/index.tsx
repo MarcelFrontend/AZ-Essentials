@@ -253,12 +253,12 @@ function Index() {
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10" />
+        {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
       {showSaved && isSaved &&
         <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 p-10">
-          <div onClick={(e) => e.stopPropagation()} className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
+          <div onClick={(e) => e.stopPropagation()} className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-transparent dark:bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
             <ScheduleModal data={savedMajorSchedule} />
           </div>
         </div>

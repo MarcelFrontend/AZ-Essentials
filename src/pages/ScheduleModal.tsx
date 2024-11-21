@@ -60,7 +60,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
 
 
     function renderDayName(dayIndex: number) {
-        return <div className="flex px-2 text-black dark:text-white border dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
+        return <div className="flex px-2 text-black dark:text-white border bg-gray-100 dark:bg-gray-900  dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
             <label htmlFor={String(dayIndex)} className="w-full text-xl py-1 cursor-pointer">
                 {daysOfWeek[dayIndex]}
             </label>
@@ -162,7 +162,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
     return (
         <ul
             style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
+            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
             {data.plan.map((day, index) => {
                 if (!Array.isArray(day) || day.length === 0) return null;
                 return renderDay(day, index);

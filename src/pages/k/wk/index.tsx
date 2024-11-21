@@ -254,10 +254,8 @@ export default function ChosenMajor() {
         setIsSaved(() => saved)
         if (saved) {
             localStorage.setItem("az-saved", `${searchedMajorName}&${searchedMajorYear}&${searchedMajorType}`)
-            console.log("Zapisano", localStorage.getItem("az-saved"));
         } else {
             localStorage.removeItem("az-saved")
-            console.log("Usunięto", localStorage.getItem("az-saved"));
         }
     }
 
