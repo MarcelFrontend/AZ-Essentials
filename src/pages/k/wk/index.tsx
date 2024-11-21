@@ -1,3 +1,4 @@
+// Todo: Jeśli jakiś dzień nie istnieje w planie to wszystko zniknie więc nie ma możliwości wybrania innych dni
 import { LessonTypes, MajorTypes } from "@/types/type";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -33,15 +34,6 @@ export default function ChosenMajor() {
         }
         return initialShowDays;
     });
-
-    // getting isSaved
-    useEffect(() => {
-        if (localStorage.getItem("az-saved")) {
-            setIsSaved(true)
-        } else {
-            setIsSaved(false)
-        }
-    }, [])
 
     // risizing
     useEffect(() => {
@@ -118,12 +110,26 @@ export default function ChosenMajor() {
         setSearchedMajorYear(year)
         setSearchedMajorType(type)
 
-        if (data && name && year) {
-            const foundMajor = data.find(major => major.name == name && major.year == year && major.type == type);
+        if (data && name && year && type) {
+            const foundMajor = data.find(major => major.name == name && major.year == year && major.type == type);            
             if (foundMajor) {
                 setChosenScheduleData(foundMajor);
+            }else{
+                console.log("Nie znaleziono kierunku");
+                
             }
         }
+
+        const params = localStorage.getItem("az-saved")?.split("&")
+
+        if (params) {
+            if (name == params[0] && year == params[1] && type == params[2]) {
+                setIsSaved(true)
+            }
+        } else {
+            setIsSaved(false)
+        }
+
         const todayIndex = new Date().getDay() - 1;
         // Todo: Jeśli urządzenie jest małe to pokaż tylko jednen wybrany dzień
         const updatedShowDays = Array(daysOfWeek.length).fill(false);
