@@ -83,7 +83,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
                 if (showDays[dayIndex]) {
                     return <li
                         key={dayIndex}
-                        className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                        className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto py-1 px-1`}
                     >
                         {renderDayName(dayIndex)}
                         {showDays[dayIndex] && (
@@ -162,7 +162,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
     return (
         <ul
             style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
+            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
             {data.plan.map((day, index) => {
                 if (!Array.isArray(day) || day.length === 0) return null;
                 return renderDay(day, index);
