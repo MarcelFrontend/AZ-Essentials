@@ -1,10 +1,9 @@
-import { LessonTypes, MajorTypes } from "@/types/type";
+import { LessonTypes } from "@/types/type";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useData } from '@/contexts/DataFetchContext';
 import Link from "next/link";
 import { FaAngleLeft } from "@/assets/icons";
-import { useRouter } from "next/router";
 import ErrorModal from "@/pages/ErrorModal";
 import Head from "next/head";
 
@@ -15,9 +14,8 @@ export default function SearchResult() {
     const [searchInput, setSearchInput] = useState<string | null>("");
     const [searchType, setSearchType] = useState<string | null>("");
     const [timeInput, setTimeInput] = useState<string | null>("");
-    const { data, setData } = useData();
+    const { data, fetchData } = useData();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const router = useRouter()
     const daysOfWeek: string[] = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
     const colorsSmooth = "transition-colors duration-150"
 
@@ -58,24 +56,6 @@ export default function SearchResult() {
 
     useEffect(() => {
         if (!data) {
-            const fetchData = async () => {
-                try {
-                    const response = await fetch('https://maramowicz.dev/azapi/database.json');
-                    if (!response.ok) throw new Error("Failed to fetch data");
-                    const jsonData: MajorTypes[] = await response.json();
-                    const filteredData = jsonData.filter((major: MajorTypes) => {
-                        return major.doc_type !== -1 && major.doc_type !== -2;
-                    });
-
-                    setData(filteredData);
-                } catch (error) {
-                    console.error(error);
-                    setErrorMessage("Błąd przy pobieraniu danych.");
-                    setTimeout(() => {
-                        router.push("/")
-                    }, 2000)
-                }
-            };
             fetchData();
             console.log("Po pobraniu danych:", data);
         } else {

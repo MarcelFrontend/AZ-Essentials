@@ -29,7 +29,6 @@ import {
 } from '@/assets/icons';
 
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { FaQuestion } from 'react-icons/fa6';
 import Head from 'next/head';
 
@@ -44,7 +43,6 @@ export default function MajorSchedule() {
     const [suggestions, setSuggestions] = useState<string[]>();
     const [showFtMajors, setShowFtMajors] = useState<boolean | null>(null)
     const { isDev } = useDev();
-    const router = useRouter();
 
     const colorsSmooth = "transition-colors duration-75";
     const shadowSmooth = "transition-shadow duration-[1.25s] delay-300 dark:duration-1000 dark:delay-100"

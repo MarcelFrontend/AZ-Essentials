@@ -7,7 +7,6 @@ import { useData } from "@/contexts/DataFetchContext";
 import { useDev } from "@/contexts/DevContext";
 import ErrorModal from "@/pages/ErrorModal";
 import { FaAngleDown, FaAngleLeft, FaAngleUp, FaRegBookmark, FaBookmark } from "@/assets/icons";
-import { useRouter } from 'next/router';
 import Head from "next/head";
 
 export default function ChosenMajor() {
@@ -24,7 +23,6 @@ export default function ChosenMajor() {
 
     const { isDev } = useDev();
 
-    const router = useRouter()
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
 
     const [showDays, setShowDays] = useState<boolean[]>(() => {

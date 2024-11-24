@@ -6,7 +6,6 @@ import { useDev } from '@/contexts/DevContext';
 import { MajorTypes, LessonTypes } from '@/types/type';
 import { FaAngleLeft } from '@/assets/icons';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
 import Head from 'next/head';
 import { useData } from '@/contexts/DataFetchContext';
