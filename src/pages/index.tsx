@@ -121,7 +121,7 @@ function Index() {
       </>
     );
   }
-  
+
 
   function getSavedMajors() {
     if (savedMajorSchedules) {
@@ -129,13 +129,16 @@ function Index() {
         const savedMajors = localStorage.getItem("az-saved")
         if (savedMajors) {
           const parsedSavedMajors = JSON.parse(savedMajors)
+          console.log(parsedSavedMajors);
           return <ul className="flex flex-col gap-3">
             <span className="text-center font-bold">Zapisane plany</span>
             {parsedSavedMajors.map((parsedMajor: string, index: number) => {
-              const [name, year, type] = parsedMajor.split("&")
+              const name = parsedMajor.split("&")[0]
+              const year = parsedMajor.split("&")[1]
+              const type = parsedMajor.split("&")[2]
               return (
                 // Todo opcjonalne: Napisać użytkonikowi
-                <button onClick={() => setChosenMajor(parsedMajor.split("&"))}
+                <button onClick={() => setChosenMajor(Array(name, year, type))}
                   key={index}
                   className="max-w-48 px-2 py-1 border rounded-lg hover:scale-105 active:scale-95 transition-transform duration-150">
                   {name} {year} {type}
