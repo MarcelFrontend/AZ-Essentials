@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface DevCtxProps {
     isDev: boolean;
@@ -9,6 +9,13 @@ const DevCtx = createContext<DevCtxProps | undefined>(undefined);
 
 export const DevProvider = ({ children }: { children: ReactNode }) => {
     const [isDev, setIsDev] = useState(false);
+    useEffect(() => {
+        const savedIsDev = sessionStorage.getItem("azIsDev")
+
+        if (savedIsDev === "true") {
+            setIsDev(true)
+        }
+    }, [])
 
     return (
         <DevCtx.Provider value={{ isDev, setIsDev }}>

@@ -1,25 +1,40 @@
+import { useData } from '@/contexts/DataFetchContext';
 import { useDev } from '@/contexts/DevContext';
-import { LessonTypes, MajorTypes } from '@/types/type';
+import { LessonTypes } from '@/types/type';
 import React, { useEffect, useState } from 'react';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa6';
 
 interface ScheduleModalProps {
-    data: MajorTypes | undefined;
+    chosenMajor: string[];
 }
 
-export default function ScheduleModal({ data }: ScheduleModalProps) {
+export default function ScheduleModal({ chosenMajor }: ScheduleModalProps) {
     const [devWidth, setDevWidth] = useState<number>(0);
     const { isDev } = useDev();
+    const { data, fetchData } = useData();
+    const [chosenMajorPlan, setChosenMajorPlan] = useState<LessonTypes[][] | null>(null)
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
     const [lessonsInCol, setLessonsInCol] = useState<number>(1);
     const [showDays, setShowDays] = useState<boolean[]>(() => {
         const initialShowDays = Array(daysOfWeek.length).fill(false);
         if (new Date().getDay() - 1 >= 0) {
             initialShowDays[new Date().getDay() - 1] = true;
-
         }
         return initialShowDays;
     });
+
+    useEffect(() => {
+        if (!chosenMajorPlan && data) {
+            const major = data.find(
+                (m) => m.name == chosenMajor[0] && m.year == chosenMajor[1] && m.type == chosenMajor[2]
+            );
+            if (major) {
+                setChosenMajorPlan(major.plan);
+            }
+        } else if (!data) {
+            fetchData();
+        }
+    }, [data, chosenMajor, chosenMajorPlan]);
 
     // risizing
     useEffect(() => {
@@ -58,9 +73,8 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
     const formatTime = (time: number) =>
         `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
 
-
     function renderDayName(dayIndex: number) {
-        return <div className="flex px-2 text-black dark:text-white border bg-gray-100 dark:bg-gray-900  dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
+        return <div className="w-full flex px-2 text-black dark:text-white border bg-gray-100 dark:bg-gray-900  dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
             <label htmlFor={String(dayIndex)} className="w-full text-xl py-1 cursor-pointer">
                 {daysOfWeek[dayIndex]}
             </label>
@@ -99,7 +113,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
             } else {
                 return <li
                     key={dayIndex}
-                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} min-w-36 max-w-full sm:w-full flex items-center justify-center flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                 >
                     {renderDayName(dayIndex)}
                     {showDays[dayIndex] && (
@@ -115,7 +129,7 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
         } else {
             return <li
                 key={dayIndex}
-                className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[79%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} xl:h-min flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[79%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} max-h-full flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1 border`}
             >
                 {renderDayName(dayIndex)}
                 {showDays[dayIndex] && (
@@ -148,25 +162,29 @@ export default function ScheduleModal({ data }: ScheduleModalProps) {
         </div>
     }
 
-    if (typeof data == 'undefined') return <div className='w-full h-full flex items-center justify-center bg-black/75'>
-        <span className='w-96 h-96 flex items-center justify-center font-bold'>
-            Błąd przy wczytywaniu danych
-        </span>
-    </div>
+    const notEmptyDaysNum = chosenMajorPlan?.filter(day => day.length > 0).length;
+    console.log(chosenMajorPlan);
 
-    const notEmptyDaysNum = data.plan.filter(day => day.length > 0).length;
+    if (notEmptyDaysNum) {
+        if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
+        if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
 
-    if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
-    if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
+        return (
+            <ul
+                style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
+                className={`relative w-full grid content-center md:content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
+                {/* Todo: Tu powinno być nav na którym powinnien być przycisk do powrotu i informacje o wysłanym kierunku */}
 
-    return (
-        <ul
-            style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-            className={`transition-colors duration-150 w-full h-full grid content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
-            {data.plan.map((day, index) => {
-                if (!Array.isArray(day) || day.length === 0) return null;
-                return renderDay(day, index);
-            })}
-        </ul>
-    );
+                <p className='text-center font-bold text-2xl'>
+                    {chosenMajor[0]}
+                    {" "}
+                    {chosenMajor[1] == "1" ? "I" : chosenMajor[1] == "2" ? "II" : "III"}
+                </p>
+                {chosenMajorPlan?.map((day, index) => {
+                    if (!Array.isArray(day) || day.length === 0) return null;
+                    return renderDay(day, index);
+                })}
+            </ul>
+        );
+    }
 };

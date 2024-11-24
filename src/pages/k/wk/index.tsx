@@ -8,9 +8,10 @@ import { useDev } from "@/contexts/DevContext";
 import ErrorModal from "@/pages/ErrorModal";
 import { FaAngleDown, FaAngleLeft, FaAngleUp, FaRegBookmark, FaBookmark } from "@/assets/icons";
 import { useRouter } from 'next/router';
+import Head from "next/head";
 
 export default function ChosenMajor() {
-    const { data, setData } = useData()
+    const { data, fetchData } = useData()
     const searchParams = useSearchParams();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [devWidth, setDevWidth] = useState<number>(0);
@@ -74,29 +75,9 @@ export default function ChosenMajor() {
         setDevWidth(window.innerWidth)
         if (data) {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać:", data);
-            setData(data);
         } else {
-            const fetchData = async () => {
-
-                try {
-                    const response = await fetch('https://maramowicz.dev/azapi/database.json');
-                    if (!response.ok) throw new Error("Failed to fetch data");
-                    const jsonData: MajorTypes[] = await response.json();
-                    const filteredData = jsonData.filter((major: MajorTypes) => {
-                        return major.doc_type !== -1 && major.doc_type !== -2;
-                    });
-                    if (isDev) console.log("Przefiltrowane dane:", filteredData);
-                    setData(filteredData);
-                } catch (error) {
-                    console.error(error);
-                    setErrorMessage("Błąd przy pobieraniu danych.");
-                    setTimeout(() => {
-                        router.push("/k")
-                    }, 1000);
-                }
-            };
-            console.clear();
             fetchData();
+            console.clear();
         }
     }, []);
 
@@ -106,32 +87,37 @@ export default function ChosenMajor() {
         const year = searchParams.get('r');
         const type = searchParams.get('t');
 
-        setSearchedMajorName(name)
-        setSearchedMajorYear(year)
-        setSearchedMajorType(type)
+        setSearchedMajorName(name);
+        setSearchedMajorYear(year);
+        setSearchedMajorType(type);
 
-        if (data && name && year && type) {
-            const foundMajor = data.find(major => major.name == name && major.year == year && major.type == type);            
-            if (foundMajor) {
-                setChosenScheduleData(foundMajor);
-            }else{
-                console.log("Nie znaleziono kierunku");
-                
-            }
-        }
-
-        const params = localStorage.getItem("az-saved")?.split("&")
-
-        if (params) {
-            if (name == params[0] && year == params[1] && type == params[2]) {
-                setIsSaved(true)
+        if (data) {
+            if (name && year && type) {
+                const foundMajor = data.find(major => (major.name == name && major.year == year && major.type == type));
+                if (foundMajor) {
+                    setChosenScheduleData(foundMajor);
+                } else {
+                    setErrorMessage("Nie udało się znaleźć danego kierunku")
+                }
+            } else {
+                setErrorMessage("Nie udało się pobrać parametrów z linku")
             }
         } else {
-            setIsSaved(false)
+            // Todo: obsłuż ten przypadek
+            console.log("Nie udało się pobrać danych");
+
+        }
+        const savedMajorsString = localStorage.getItem("az-saved");
+        const params = savedMajorsString ? JSON.parse(savedMajorsString) : [];
+        console.log(params);
+
+        if (params.some((major: string) => major === `${name}&${year}&${type}`)) {
+            setIsSaved(true);
+        } else {
+            setIsSaved(false);
         }
 
         const todayIndex = new Date().getDay() - 1;
-        // Todo: Jeśli urządzenie jest małe to pokaż tylko jednen wybrany dzień
         const updatedShowDays = Array(daysOfWeek.length).fill(false);
         updatedShowDays[todayIndex] = true;
         setShowDays(updatedShowDays);
@@ -250,20 +236,28 @@ export default function ChosenMajor() {
     }
 
     function toggleSave() {
-        const saved = !isSaved
-        setIsSaved(() => saved)
+        const saved = !isSaved;
+        setIsSaved(saved);
+
+        const savedMajorsString = localStorage.getItem("az-saved");
+        const savedMajors = savedMajorsString ? JSON.parse(savedMajorsString) : [];
+
         if (saved) {
-            localStorage.setItem("az-saved", `${searchedMajorName}&${searchedMajorYear}&${searchedMajorType}`)
+            savedMajors.push(`${searchedMajorName}&${searchedMajorYear}&${searchedMajorType}`);
+            localStorage.setItem("az-saved", JSON.stringify(savedMajors));
         } else {
-            localStorage.removeItem("az-saved")
+            const updatedMajors = savedMajors.filter((major: string) =>
+                major !== `${searchedMajorName}&${searchedMajorYear}&${searchedMajorType}`
+            );
+            localStorage.setItem("az-saved", JSON.stringify(updatedMajors));
         }
     }
 
     return (
         <div className={`h-[92vh] sm:h-[99vh] overflow-hidden pb-12 ${isDev && "border border-black dark:border-white"}`}>
-            <head>
+            <Head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
-            </head>
+            </Head>
             <div className="relative w-screen h-14 flex items-center md:py-0 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)]">
                 <div className='w-full flex items-center justify-start py-2'>
                     <Link

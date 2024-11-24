@@ -8,10 +8,12 @@ import { FaAngleLeft } from '@/assets/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
+import Head from 'next/head';
+import { useData } from '@/contexts/DataFetchContext';
 
 
 function DynamicSearch() {
-    const [data, setData] = useState<MajorTypes[]>();
+    const { data, fetchData } = useData()
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [hourSuggestions, setHourSuggestions] = useState<string[]>([]);
     const [searchInput, setSearchInput] = useState<string>('');
@@ -23,7 +25,6 @@ function DynamicSearch() {
     const [searchType, setSearchType] = useState<string | null>("")
     const { isDev } = useDev();
 
-    const router = useRouter()
     const searchParams = useSearchParams()
 
     const colorsSmooth = "transition-colors duration-150"
@@ -47,33 +48,14 @@ function DynamicSearch() {
     // fetching data 
     useEffect(() => {
         if (!data) {
-            const fetchData = async () => {
-                try {
-                    const response = await fetch('https://maramowicz.dev/azapi/database.json');
-                    if (!response.ok) throw new Error("Failed to fetch data");
-                    const jsonData: MajorTypes[] = await response.json();
-                    const filteredData = jsonData.filter((major: MajorTypes) => {
-                        return major.doc_type !== -1 && major.doc_type !== -2;
-                    });
-                    if (isDev) console.log("Przefiltrowane dane:", filteredData);
-
-                    setData(filteredData);
-                } catch (error) {
-                    console.error(error);
-                    setErrorMessage("Błąd przy pobieraniu danych.");
-                    setTimeout(() => {
-                        router.push("/")
-                    }, 2000)
-                }
-            };
             fetchData();
-            console.log("Po pobraniu danych:", data);
         } else {
             console.log("Dane istniały");
         }
         console.clear();
         resetInputs();
     }, []);
+
     // suggestions
     useEffect(() => {
         const chosenTypeSet = new Set<string>();
@@ -234,19 +216,16 @@ function DynamicSearch() {
             setErrorMessage(errorMessages);
         }
 
-        if (results.length > 0) {
-            console.log("Zdane");
-        } else {
+        if (results.length < 1) {
             setErrorMessage("Nie znaleziono wykładu dla podanych danych");
-            console.log("Buda");
         }
     }
 
     return (
         <div className={`h-screen bg-white dark:bg-gray-900 transition-colors duration-700 overflow-y-hidden ${isDev && "border"}`}>
-            <head>
+            <Head>
                 <title>Informacje o {searchType == "p" ? "sali" : "wykładowcy"}</title>
-            </head>
+            </Head>
             <div className={`relative h-full flex items-center justify-center flex-col gap-5 md:gap-10 ${isDev && "border border-black dark:border-white"}`}>
                 <Link className={`absolute -top-1 left-2 text-3xl lg:text-4xl mt-4 text-black dark:text-white dark:shadow-gray-600 p-1 hover:scale-105 active:scale-95 focus:scale-105 transition-transform duration-150 ${colorsSmooth}`} href={"/"}>
                     <FaAngleLeft />
@@ -276,6 +255,7 @@ function DynamicSearch() {
                             ))}
                         </datalist>
                     )}
+                    {/* Todo: Pokaż tylko jeśli wybrany typ pasuje do jednej z proponowanych wartości */}
                     <select className={`${optionsStyle}`} onChange={(e) => fetchDay(e.target.value)}
                         disabled={searchInput.length < 3}>
                         <option hidden>Wybierz dzień</option>

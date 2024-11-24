@@ -31,9 +31,10 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FaQuestion } from 'react-icons/fa6';
+import Head from 'next/head';
 
 export default function MajorSchedule() {
-    const { data, setData } = useData();
+    const { data, fetchData } = useData();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [selectedYear, setSelectedYear] = useState<string | null>(null);
     const [searchedMajor, setSearchedMajor] = useState<string>("");
@@ -61,39 +62,12 @@ export default function MajorSchedule() {
         // if(window.innerWidth > )
         if (data) {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać:", data);
-            setData(data);
             const majorNameSuggestions = new Set<string>()
             data.map(major => {
                 if (major.name) majorNameSuggestions.add(major.name)
             })
             setSuggestions(Array.from(majorNameSuggestions))
         } else {
-            const fetchData = async () => {
-                try {
-                    const response = await fetch('https://maramowicz.dev/azapi/database.json');
-                    if (!response.ok) throw new Error("Failed to fetch data");
-                    const jsonData: MajorTypes[] = await response.json();
-                    if (isDev) console.log(jsonData);
-                    const filteredData = jsonData.filter((major: MajorTypes) => {
-                        return major.doc_type !== -1 && major.doc_type !== -2;
-                    });
-                    if (isDev) console.log("Przefiltrowane dane:", filteredData);
-                    const majorNameSuggestions = new Set<string>()
-                    filteredData.map(major => {
-                        if (major.name) majorNameSuggestions.add(major.name)
-                    })
-                    setSuggestions(Array.from(majorNameSuggestions))
-
-                    setData(filteredData);
-                } catch (error) {
-                    console.error(error);
-                    setErrorMessage("Błąd przy pobieraniu danych.");
-                    setTimeout(() => {
-                        router.push("/")
-                    }, 1000);
-                }
-            };
-            console.clear();
             fetchData();
         }
     }, []);
@@ -166,7 +140,7 @@ export default function MajorSchedule() {
         });
 
 
-        function getSearchedMajor(major: MajorTypes) {
+        function getSearchedMajor(major: MajorTypes, index: number) {
             return (
                 <Link
                     href={{
@@ -177,6 +151,7 @@ export default function MajorSchedule() {
                             t: major.type
                         },
                     }}
+                    key={index}
                     onClick={() => setChosenScheduleData(major)} className={`relative h-36 w-full min-[1300px]:h-44 flex items-center justify-center flex-col gap-0.5 text-center px-2 py-1 text-black dark:text-white rounded-md shadow-[0px_2px_5px_2px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_2px_rgb(5,5,5)] ${shadowSmooth} ${isDev && devBorder} transition-colors duration-500 ${interStyles}`}>
                     <div className='absolute top-1 right-1 text-3xl md:text-4xl'>
                         {major.name && getMajorIcon(major.name)}
@@ -194,20 +169,20 @@ export default function MajorSchedule() {
             )
         }
 
-        return sortedMajors.map(major => {
+        return sortedMajors.map((major, index) => {
             // Todo: dodaj wybór niestacjonarnych lub stacjonarnych
             if (major.name && major.year && major.type && (selectedYear === null || major.year == selectedYear)) {
                 if (showFtMajors === null) {
-                    return getSearchedMajor(major)
+                    return getSearchedMajor(major, index)
                 } else if (showFtMajors == true) {
                     if (major.type.trim().toLowerCase() == "ogólna" || major.type.trim().toLowerCase() == "stacjonarne") {
                         // console.log(major.type, numOfMajorTypes);
-                        return getSearchedMajor(major)
+                        return getSearchedMajor(major, index)
                     }
                 } else {
                     if (major.type.trim().toLowerCase() == "niestacjonarne") {
                         // console.log(major.type, numOfMajorTypes);
-                        return getSearchedMajor(major)
+                        return getSearchedMajor(major, index)
                     }
                 }
 
@@ -229,9 +204,9 @@ export default function MajorSchedule() {
 
     return (
         <div className={`relative h-[92vh] sm:h-screen flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
-            <head>
+            <Head>
                 <title>Kierunki</title>
-            </head>
+            </Head>
             <div className={`relative w-screen h-14 flex items-center md:py-1 px-2 shadow-[0px_1px_10px_1px_rgb(225,225,225)] dark:shadow-[0px_1px_10px_1px_rgb(10,10,10)] ${shadowSmooth}`}>
                 {!chosenScheduleData && (
                     <div className='relative w-full flex items-center gap-5 pr-5 md:pr-2'>

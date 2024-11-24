@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion } from 'framer-motion';
-import { MajorTypes } from '@/types/type';
 import { useData } from '@/contexts/DataFetchContext';
 import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen, FaCog, GoSun, GoMoon } from '@/assets/icons'
 import { IconType } from "react-icons";
@@ -9,19 +8,21 @@ import { useTheme } from "next-themes";
 import { useDev } from "@/contexts/DevContext";
 import { BsBookmarkCheckFill } from "react-icons/bs";
 import ScheduleModal from "./ScheduleModal";
+import Head from "next/head";
+import { FaAngleLeft } from "react-icons/fa";
 
 function Index() {
-  const { data, setData } = useData()
+  const { data, fetchData } = useData()
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [animationPreference, setAnimationPreference] = useState<boolean>(true);
   const [animShowed, setAnimShowed] = useState<boolean>(false);
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
-  const [isSaved, setIsSaved] = useState<string>("");
   const [showSaved, setShowSaved] = useState<boolean>(false);
   const { isDev, setIsDev } = useDev();
-  const [savedMajorSchedule, setSavedMajorSchedule] = useState<MajorTypes | undefined>()
+  const [savedMajorSchedules, setSavedMajorSchedules] = useState<string[] | null>();
+  const [chosenMajor, setChosenMajor] = useState<string[] | null>(null);
 
   const colorsSmooth = "transition-colors duration-100";
 
@@ -32,28 +33,15 @@ function Index() {
     if (sessionStorage.getItem("azAnim")) {
       setAnimShowed(true)
     }
-    const savedItem = localStorage.getItem("az-saved");
-    if (savedItem) {
-      setIsSaved(savedItem);
-      const params = savedItem.split("&")
-      data?.map(major => {
-        if (major.name == params[0] && major.year == params[1] && major.type == params[2]) {
-          setSavedMajorSchedule(major)
-        }
-      })
-    }
   }, [])
 
   useEffect(() => {
     const savedItem = localStorage.getItem("az-saved");
     if (savedItem) {
-      setIsSaved(savedItem);
-      const params = savedItem.split("&")
-      data?.map(major => {
-        if (major.name == params[0] && major.year == params[1] && major.type == params[2]) {
-          setSavedMajorSchedule(major)
-        }
-      })
+      setSavedMajorSchedules(JSON.parse(savedItem))
+    }
+    if (data) {
+      setIsLoading(false)
     }
   }, [data])
 
@@ -80,26 +68,17 @@ function Index() {
       setAnimationPreference(true);
     }
     if (!data) {
-      const fetchData = async () => {
-        setIsLoading(true);
-        try {
-          const response = await fetch('https://maramowicz.dev/azapi/database.json');
-          if (!response.ok) throw new Error("Nie udało się pobrać danych");
-          const jsonData: MajorTypes[] = await response.json();
-          setData(jsonData)
-          console.log("Dane zostały pobrane");
-        } catch (error) {
-          console.error(error);
-          setData(null)
-        } finally {
-          setIsLoading(false);
-        }
-      };
       fetchData();
     } else {
-      console.log("Dane istniały");
+      if (isDev) console.log("Dane istniały");
     }
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      if (isDev) console.log("Pobrano dane pomyślnie:", data);
+    }
+  }, [data])
 
   function ListEl({ icon: Icon, mainTask, taskDesc, index }: { icon: IconType, mainTask: string, taskDesc: string, index: number }) {
     return (
@@ -143,9 +122,44 @@ function Index() {
     );
   }
 
+  function getSavedMajors() {
+    if (savedMajorSchedules) {
+      if (!chosenMajor) {
+        const savedMajors = localStorage.getItem("az-saved")
+        if (savedMajors) {
+          const parsedSavedMajors = JSON.parse(savedMajors)
+          return <ul className="flex flex-col gap-3">
+            <span className="text-center font-bold">Zapisane plany</span>
+            {parsedSavedMajors.map((parsedMajor: string, index: number) => {
+              const [name, year, type] = parsedMajor.split("&")
+              return (
+                // Todo opcjonalne: Napisać użytkonikowi
+                <button onClick={() => setChosenMajor(Array(name, year, type))}
+                  key={index}
+                  className="max-w-48 px-2 py-1 border rounded-lg hover:scale-105 active:scale-95 transition-transform duration-150">
+                  {name} {year} {type}
+                </button>
+              )
+            })}
+          </ul>
+        } else {
+          console.log("Nie zapisano żadnych planów");
+        }
+      } else {
+        return (
+          <>
+            <FaAngleLeft onClick={() => setChosenMajor(null)} className="absolute left-3 top-4 text-5xl bg-gray-800 rounded-full z-10" />
+            <ScheduleModal chosenMajor={chosenMajor} />
+          </>
+        )
+      }
+    }
+  }
+
   return (
-    <div className="relative h-[93vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
-      <head>
+    // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
+    <div className="relative  h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+      <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
@@ -153,8 +167,7 @@ function Index() {
         <meta name="apple-mobile-web-app-title" content="MyWebSite" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
         <title>AZ Essentials</title>
-      </head>
-      {/* Tood opcjonalne: Tu powinien być przycisk ustawień a w nim preferencje */}
+      </Head>
       {/* Todo opcjonalne: Mini gra */}
       {/* Todo: Pokaż za pomocą procentów poprawność danych */}
       <div className="w-10 absolute top-3 right-4 md:right-3 flex items-center flex-col gap-2">
@@ -172,9 +185,9 @@ function Index() {
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="cursor-pointer">
               {currentTheme === 'dark' ? (
-                <GoSun title="Włącz ciemny motyw" className="h-9 w-auto text-black dark:text-white hover:text-yellow-200 transition-colors duration-500" />
+                <GoSun title="Włącz jasny motyw" className="h-9 w-auto text-black dark:text-white hover:text-yellow-200 transition-colors duration-500" />
               ) : (
-                <GoMoon title="Włącz jasny motyw" className="h-9 w-auto text-black dark:text-white hover:text-blue-800 transition-colors duration-500" />
+                <GoMoon title="Włącz ciemny motyw" className="h-9 w-auto text-black dark:text-white hover:text-blue-800 transition-colors duration-500" />
               )}
             </li>
           </ul>
@@ -245,24 +258,25 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <footer className="w-full flex items-center justify-between absolute bottom-2 px-4">
+      <footer className="w-full flex items-center justify-between absolute bottom-1 px-4">
         <span
           onDoubleClick={() => {
-            setIsDev(!isDev); console.log("Tryb developera:", !isDev);
+            setIsDev(!isDev); sessionStorage.setItem("azIsDev", `${!isDev}`); console.log("Tryb developera:", !isDev);
           }}
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        {isSaved && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
+        {savedMajorSchedules && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
-      {showSaved && isSaved &&
-        <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 p-10">
-          <div onClick={(e) => e.stopPropagation()} className={`transition-colors duration-150 w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 bg-transparent dark:bg-gray-900 rounded-lg ${isDev && "border border-black dark:border-white"}`}>
-            <ScheduleModal data={savedMajorSchedule} />
+      {showSaved && savedMajorSchedules && (
+        <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div onClick={(e) => e.stopPropagation()} className={`relative max-h-[90%] w-[90%] flex items-center justify-center flex-col gap-2 p-5 pt-6 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
+            {/* Todo: jeśli użytkownik zapisał tylko jeden plan to go defaultowo pokaż, jak nie to zmapuj */}
+            {getSavedMajors()}
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }
