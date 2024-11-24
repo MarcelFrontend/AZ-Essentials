@@ -178,7 +178,7 @@ export default function ScheduleModal({ chosenMajor }: ScheduleModalProps) {
                 <p className='text-center font-bold text-2xl'>
                     {chosenMajor[0]}
                     {" "}
-                    {chosenMajor[1] == "1" ? "I" : chosenMajor[1] == "2" ? "II" : "III"}
+                    {chosenMajor[1]}
                 </p>
                 {chosenMajorPlan?.map((day, index) => {
                     if (!Array.isArray(day) || day.length === 0) return null;
