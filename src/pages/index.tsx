@@ -121,6 +121,7 @@ function Index() {
       </>
     );
   }
+  
 
   function getSavedMajors() {
     if (savedMajorSchedules) {
@@ -134,7 +135,7 @@ function Index() {
               const [name, year, type] = parsedMajor.split("&")
               return (
                 // Todo opcjonalne: Napisać użytkonikowi
-                <button onClick={() => setChosenMajor([name, year, type])}
+                <button onClick={() => setChosenMajor(parsedMajor.split("&"))}
                   key={index}
                   className="max-w-48 px-2 py-1 border rounded-lg hover:scale-105 active:scale-95 transition-transform duration-150">
                   {name} {year} {type}
