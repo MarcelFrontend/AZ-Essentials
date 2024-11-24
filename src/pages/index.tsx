@@ -138,7 +138,7 @@ function Index() {
               const type = parsedMajor.split("&")[2]
               return (
                 // Todo opcjonalne: Napisać użytkonikowi
-                <button onClick={() => setChosenMajor(Array(name, year, type))}
+                <button onClick={() => setChosenMajor([name, year, type])}
                   key={index}
                   className="max-w-48 px-2 py-1 border rounded-lg hover:scale-105 active:scale-95 transition-transform duration-150">
                   {name} {year} {type}
