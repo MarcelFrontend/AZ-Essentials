@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useDev } from "@/contexts/DevContext";
 import { BsBookmarkCheckFill } from "react-icons/bs";
-import ScheduleModal from "./ScheduleModal";
+import ScheduleModal from "@/pages/ScheduleModal";
 import Head from "next/head";
 import { MajorTypes } from "@/types/type";
 

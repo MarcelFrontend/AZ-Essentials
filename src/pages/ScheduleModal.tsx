@@ -1,7 +1,7 @@
 import { useDev } from '@/contexts/DevContext';
 import { LessonTypes, MajorTypes } from '@/types/type';
 import React, { useEffect, useState } from 'react';
-import { FaAngleDown, FaAngleLeft, FaAngleUp } from 'react-icons/fa6';
+import { FaAngleDown, FaAngleLeft, FaAngleUp } from '@/assets/icons';
 
 interface ScheduleModalProps {
     chosenMajorData: MajorTypes;
@@ -20,7 +20,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
         }
         return initialShowDays;
     });
-
+    
     // risizing
     useEffect(() => {
         setDevWidth(window.innerWidth)
@@ -54,6 +54,9 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
             window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+    if (!chosenMajorData) return
+
 
     const formatTime = (time: number) =>
         `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
