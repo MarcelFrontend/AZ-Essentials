@@ -1,18 +1,16 @@
-import { useData } from '@/contexts/DataFetchContext';
 import { useDev } from '@/contexts/DevContext';
-import { LessonTypes } from '@/types/type';
+import { LessonTypes, MajorTypes } from '@/types/type';
 import React, { useEffect, useState } from 'react';
-import { FaAngleDown, FaAngleUp } from 'react-icons/fa6';
+import { FaAngleDown, FaAngleLeft, FaAngleUp } from 'react-icons/fa6';
 
 interface ScheduleModalProps {
-    chosenMajor: string[];
+    chosenMajorData: MajorTypes;
+    returnToMenu: () => void
 }
 
-export default function ScheduleModal({ chosenMajor }: ScheduleModalProps) {
+export default function ScheduleModal({ chosenMajorData, returnToMenu }: ScheduleModalProps) {
     const [devWidth, setDevWidth] = useState<number>(0);
     const { isDev } = useDev();
-    const { data, fetchData } = useData();
-    const [chosenMajorPlan, setChosenMajorPlan] = useState<LessonTypes[][] | null>(null)
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
     const [lessonsInCol, setLessonsInCol] = useState<number>(1);
     const [showDays, setShowDays] = useState<boolean[]>(() => {
@@ -22,19 +20,6 @@ export default function ScheduleModal({ chosenMajor }: ScheduleModalProps) {
         }
         return initialShowDays;
     });
-
-    useEffect(() => {
-        if (!chosenMajorPlan && data) {
-            const major = data.find(
-                (m) => m.name == chosenMajor[0] && m.year == chosenMajor[1] && m.type == chosenMajor[2]
-            );
-            if (major) {
-                setChosenMajorPlan(major.plan);
-            }
-        } else if (!data) {
-            fetchData();
-        }
-    }, [data, chosenMajor, chosenMajorPlan]);
 
     // risizing
     useEffect(() => {
@@ -129,7 +114,7 @@ export default function ScheduleModal({ chosenMajor }: ScheduleModalProps) {
         } else {
             return <li
                 key={dayIndex}
-                className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[79%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} max-h-full flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1 border`}
+                className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[79%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} max-h-full flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
             >
                 {renderDayName(dayIndex)}
                 {showDays[dayIndex] && (
@@ -162,29 +147,44 @@ export default function ScheduleModal({ chosenMajor }: ScheduleModalProps) {
         </div>
     }
 
-    const notEmptyDaysNum = chosenMajorPlan?.filter(day => day.length > 0).length;
-    console.log(chosenMajorPlan);
+    const notEmptyDaysNum = chosenMajorData.plan?.filter(day => day.length > 0).length;
+
+    chosenMajorData.plan.map((day, index) => {
+        const truePos = showDays.findIndex(showDay => showDay === true);
+        if (day.length < 1) {
+            console.log(showDays[truePos], truePos);
+            if (index === truePos) {
+                const updatedShowDays = Array(showDays.length).fill(false);
+                setShowDays(updatedShowDays);
+            }
+        }
+    });
+
 
     if (notEmptyDaysNum) {
         if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
         if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
 
         return (
-            <ul
-                style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-                className={`relative w-full grid content-center md:content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
-                {/* Todo: Tu powinno być nav na którym powinnien być przycisk do powrotu i informacje o wysłanym kierunku */}
-
-                <p className='text-center font-bold text-2xl'>
-                    {chosenMajor[0]}
-                    {" "}
-                    {chosenMajor[1] == "1" ? "I" : chosenMajor[1] == "2" ? "II" : "III"}
-                </p>
-                {chosenMajorPlan?.map((day, index) => {
-                    if (!Array.isArray(day) || day.length === 0) return null;
-                    return renderDay(day, index);
-                })}
-            </ul>
+            <>
+                <div className='w-full flex items-center mb-4'>
+                    <FaAngleLeft className='text-3xl' onClick={() => returnToMenu()} />
+                    <span className='w-full text-center font-bold text-xl'>
+                        {chosenMajorData.name}
+                        {" "}
+                        {chosenMajorData.groups[0].slice(4, 6)}
+                    </span>
+                </div>
+                <ul
+                    style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
+                    className={`relative w-full grid md:content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
+                    {/* Todo: Tu powinno być nav na którym powinnien być przycisk do powrotu i informacje o wysłanym kierunku */}
+                    {chosenMajorData.plan?.map((day, index) => {
+                        if (!Array.isArray(day) || day.length === 0) return null;
+                        return renderDay(day, index);
+                    })}
+                </ul>
+            </>
         );
     }
 };

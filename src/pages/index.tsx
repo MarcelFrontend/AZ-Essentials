@@ -10,9 +10,11 @@ import { BsBookmarkCheckFill } from "react-icons/bs";
 import ScheduleModal from "./ScheduleModal";
 import Head from "next/head";
 import { FaAngleLeft } from "react-icons/fa";
+import { MajorTypes } from "@/types/type";
 
 function Index() {
   const { data, fetchData } = useData()
+  const { isDev, setIsDev } = useDev();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [animationPreference, setAnimationPreference] = useState<boolean>(true);
   const [animShowed, setAnimShowed] = useState<boolean>(false);
@@ -20,9 +22,8 @@ function Index() {
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const [showSaved, setShowSaved] = useState<boolean>(false);
-  const { isDev, setIsDev } = useDev();
-  const [savedMajorSchedules, setSavedMajorSchedules] = useState<string[] | null>();
-  const [chosenMajor, setChosenMajor] = useState<string[] | null>(null);
+  const [savedMajorSchedules, setSavedMajorSchedules] = useState<string[] | null>(null);
+  const [chosenMajor, setChosenMajor] = useState<MajorTypes | undefined>(undefined);
 
   const colorsSmooth = "transition-colors duration-100";
 
@@ -122,39 +123,30 @@ function Index() {
     );
   }
 
-
   function getSavedMajors() {
-    if (savedMajorSchedules) {
+    if (showSaved) {
       if (!chosenMajor) {
-        const savedMajors = localStorage.getItem("az-saved")
-        if (savedMajors) {
-          const parsedSavedMajors = JSON.parse(savedMajors)
-          console.log(parsedSavedMajors);
-          return <ul className="flex flex-col gap-3">
-            <span className="text-center font-bold">Zapisane plany</span>
-            {parsedSavedMajors.map((parsedMajor: string, index: number) => {
-              const name = parsedMajor.split("&")[0]
-              const year = parsedMajor.split("&")[1]
-              const type = parsedMajor.split("&")[2]
-              return (
-                // Todo opcjonalne: Napisać użytkonikowi
-                <button onClick={() => setChosenMajor([name, year, type])}
-                  key={index}
-                  className="max-w-48 px-2 py-1 border rounded-lg hover:scale-105 active:scale-95 transition-transform duration-150">
-                  {name} {year} {type}
-                </button>
-              )
-            })}
-          </ul>
-        } else {
-          console.log("Nie zapisano żadnych planów");
-        }
+        return savedMajorSchedules?.map((major, index) => {
+          const splitedMajor = major.split("&");
+          const majorData = data?.find(major =>
+            major.name == splitedMajor[0] &&
+            major.year == splitedMajor[1] &&
+            major.type == splitedMajor[2]
+          );
+          return (
+            <button onClick={() => setChosenMajor(majorData)} key={index} className="w-40 border rounded-lg">
+              {splitedMajor[0]}{" "}
+              {splitedMajor[1]}{" "}
+              {splitedMajor[2]}
+            </button>
+          );
+        });
       } else {
+        const returnToSavedMajorsMenu = () => {
+          setChosenMajor(undefined)
+        }
         return (
-          <>
-            <FaAngleLeft onClick={() => setChosenMajor(null)} className="absolute left-3 top-4 text-5xl bg-gray-800 rounded-full z-10" />
-            <ScheduleModal chosenMajor={chosenMajor} />
-          </>
+          <ScheduleModal returnToMenu={returnToSavedMajorsMenu} chosenMajorData={chosenMajor} />
         )
       }
     }
@@ -275,7 +267,7 @@ function Index() {
       </footer>
       {showSaved && savedMajorSchedules && (
         <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div onClick={(e) => e.stopPropagation()} className={`relative max-h-[90%] w-[90%] flex items-center justify-center flex-col gap-2 p-5 pt-6 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
+          <div onClick={(e) => e.stopPropagation()} className={`relative max-h-[90%] w-[90%] flex items-center justify-center flex-col gap-2 p-5 pt-2 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
             {/* Todo: jeśli użytkownik zapisał tylko jeden plan to go defaultowo pokaż, jak nie to zmapuj */}
             {getSavedMajors()}
           </div>
