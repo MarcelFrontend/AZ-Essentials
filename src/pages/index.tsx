@@ -9,7 +9,6 @@ import { useDev } from "@/contexts/DevContext";
 import { BsBookmarkCheckFill } from "react-icons/bs";
 import ScheduleModal from "./ScheduleModal";
 import Head from "next/head";
-import { FaAngleLeft } from "react-icons/fa";
 import { MajorTypes } from "@/types/type";
 
 function Index() {
