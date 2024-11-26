@@ -181,6 +181,7 @@ function Index() {
       }
     }
   }
+  // lol
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
