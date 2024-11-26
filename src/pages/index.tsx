@@ -35,7 +35,7 @@ function Index() {
       setDevWidth(window.innerWidth)
     }
     if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
-      setUserBrowser("Chrome")
+      setUserBrowser(userAgent)
     }
     //  else if (userAgent.includes("Firefox")) {
     //   console.log("Firefox")
@@ -318,6 +318,7 @@ function Index() {
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
+        <span>{userBrowser}</span>
         {savedMajorSchedules && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
