@@ -14,7 +14,7 @@ export default function ChosenMajor() {
     const searchParams = useSearchParams();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [devWidth, setDevWidth] = useState<number>(0);
-    const [lessonsInCol, setLessonsInCol] = useState<number>(1);
+    const [lessonsInRow, setLessonsInRow] = useState<number>(1);
     const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [searchedMajorName, setSearchedMajorName] = useState<string | null>(null)
     const [searchedMajorYear, setSearchedMajorYear] = useState<string | null>(null)
@@ -26,12 +26,18 @@ export default function ChosenMajor() {
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
 
     const [showDays, setShowDays] = useState<boolean[]>(() => {
-        const initialShowDays = Array(daysOfWeek.length).fill(false);
-        if (new Date().getDay() - 1 >= 0) {
-            initialShowDays[new Date().getDay() - 1] = true;
-
+        if (typeof window !== "undefined" && window.innerWidth >= 768) {
+            const initialShowDays = Array(daysOfWeek.length).fill(true);
+            console.log("Pokaż wszysktie");
+            return initialShowDays
+        } else {
+            const initialShowDays = Array(daysOfWeek.length).fill(false);
+            if (new Date().getDay() - 1 >= 0) {
+                initialShowDays[new Date().getDay() - 1] = true;
+            }
+            console.log("Pokaż tylko jeden");
+            return initialShowDays;
         }
-        return initialShowDays;
     });
 
     // risizing
@@ -50,7 +56,7 @@ export default function ChosenMajor() {
             } else {
                 columns = 5;
             }
-            if (width > 768) {
+            if (width > 1920) {
                 setShowDays(Array(daysOfWeek.length).fill(true));
             } else {
                 const todayIndex = new Date().getDay() - 1;
@@ -58,7 +64,7 @@ export default function ChosenMajor() {
                 if (todayIndex >= 0) initialShowDays[todayIndex] = true;
                 setShowDays(initialShowDays);
             }
-            setLessonsInCol(columns);
+            setLessonsInRow(columns);
         };
         handleResize();
         window.addEventListener('resize', handleResize);
@@ -90,6 +96,7 @@ export default function ChosenMajor() {
         setSearchedMajorType(type);
 
         if (data) {
+            setErrorMessage("")
             if (name && year && type) {
                 const foundMajor = data.find(major => (major.name == name && major.year == year && major.type == type));
                 if (foundMajor) {
@@ -103,7 +110,6 @@ export default function ChosenMajor() {
         } else {
             // Todo: obsłuż ten przypadek
             console.log("Nie udało się pobrać danych");
-
         }
         const savedMajorsString = localStorage.getItem("az-saved");
         const params = savedMajorsString ? JSON.parse(savedMajorsString) : [];
@@ -114,11 +120,17 @@ export default function ChosenMajor() {
         } else {
             setIsSaved(false);
         }
+        console.log("Szerokość:", devWidth);
+        if (devWidth >= 1920) {
+            console.log("Pokaż wszystkie");
 
-        const todayIndex = new Date().getDay() - 1;
-        const updatedShowDays = Array(daysOfWeek.length).fill(false);
-        updatedShowDays[todayIndex] = true;
-        setShowDays(updatedShowDays);
+            setShowDays(Array(daysOfWeek.length).fill(true))
+        } else {
+            const todayIndex = new Date().getDay() - 1;
+            const updatedShowDays = Array(daysOfWeek.length).fill(false);
+            updatedShowDays[todayIndex] = true;
+            setShowDays(updatedShowDays);
+        }
     }, [data, searchParams]);
 
     function renderChosenSchedule() {
@@ -129,7 +141,7 @@ export default function ChosenMajor() {
         const notEmptyDaysNum = chosenScheduleData.plan.filter(day => day.length > 0).length;
 
         if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
-        if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
+        if (notEmptyDaysNum < lessonsInRow) setLessonsInRow(notEmptyDaysNum);
 
         function renderDayName(dayIndex: number) {
             return <div className="flex px-2 py-1 text-black dark:text-white border dark:border-gray-950 rounded-lg shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
@@ -155,12 +167,12 @@ export default function ChosenMajor() {
                     if (showDays[dayIndex]) {
                         return <li
                             key={dayIndex}
-                            className={`${(notEmptyDaysNum === lessonsInCol) ? 'h-full' : 'h-full md:h-[22rem] lg:h-[30rem] xl:h-96 pb-3'} flex flex-col gap-1  transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                            className={`${(notEmptyDaysNum === lessonsInRow) ? 'h-full' : 'h-full md:h-[22rem] lg:h-[30rem] xl:h-96 pb-3'} flex flex-col gap-1  transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                         >
                             {renderDayName(dayIndex)}
                             {showDays[dayIndex] && (
                                 <div
-                                    className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                                    className={`max-h-full grid ${(notEmptyDaysNum === lessonsInRow && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
                                         } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
                                 >
                                     {day.map((lesson, index) => renderLesson(lesson, index))}
@@ -171,12 +183,12 @@ export default function ChosenMajor() {
                 } else {
                     return <li
                         key={dayIndex}
-                        className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                        className={`${(notEmptyDaysNum === lessonsInRow && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                     >
                         {renderDayName(dayIndex)}
                         {showDays[dayIndex] && (
                             <div
-                                className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                                className={`max-h-full grid ${(notEmptyDaysNum === lessonsInRow && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
                                     } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
                             >
                                 {day.map((lesson, index) => renderLesson(lesson, index))}
@@ -187,12 +199,12 @@ export default function ChosenMajor() {
             } else {
                 return <li
                     key={dayIndex}
-                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                    className={`${(notEmptyDaysNum === lessonsInRow && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                 >
                     {renderDayName(dayIndex)}
                     {showDays[dayIndex] && (
                         <div
-                            className={`max-h-full grid ${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
+                            className={`max-h-full grid ${(notEmptyDaysNum === lessonsInRow && devWidth > 768) ? 'grid-cols-2' : 'min-[471px]:grid-cols-2'
                                 } sm:grid-cols-1 gap-2 md:gap-3 custom-scrollbar overflow-x-hidden px-2 pb-1`}
                         >
                             {day.map((lesson, index) => renderLesson(lesson, index))}
@@ -221,7 +233,7 @@ export default function ChosenMajor() {
         }
         return (
             <ul
-                style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
+                style={{ gridTemplateColumns: `repeat(${lessonsInRow}, 1fr)` }}
                 className={`w-full h-full grid content-start gap-1 md:pb-0 overflow-y-hidden px-2 py-1 ${isDev && "border border-black dark:border-white"
                     }`}
             >
@@ -252,7 +264,7 @@ export default function ChosenMajor() {
     }
 
     return (
-        <div className={`h-[92vh] sm:h-[99vh] overflow-hidden pb-12 ${isDev && "border border-black dark:border-white"}`}>
+        <div className={`h-[92vh] sm:h-[99vh] overflow-hidden pb-12 md:pb-1 ${isDev && "border border-black dark:border-white"}`}>
             <Head>
                 <title>{searchedMajorName} {searchedMajorYear} rok</title>
             </Head>

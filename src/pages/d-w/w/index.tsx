@@ -10,6 +10,7 @@ import Head from "next/head";
 export default function SearchResult() {
     const searchParams = useSearchParams();
     const [results, setResults] = useState<LessonTypes[]>([]);
+    const [majorName, setMajorName] = useState<string | null>(null)
     const [dayInput, setDayInput] = useState<string | null>("");
     const [searchInput, setSearchInput] = useState<string | null>("");
     const [searchType, setSearchType] = useState<string | null>("");
@@ -31,11 +32,13 @@ export default function SearchResult() {
                             if (searchType === "p") {
                                 const isMatch = searchInput.split(" ").every(str => lesson.place.includes(str));
                                 if (isMatch) {
+                                    setMajorName(`${major.name} ${major.year} rok`)
                                     uniqueResults.add(lesson);
-
                                 }
                             } else if (searchType === "t" && lesson.teacher === searchInput) {
+                                setMajorName(`${major.name} ${major.year} rok`)
                                 uniqueResults.add(lesson);
+
                             }
                         }
                     });
@@ -54,6 +57,7 @@ export default function SearchResult() {
         setTimeInput(searchParams.get('h'));
     }, [searchParams]);
 
+    // Pobieranie danych
     useEffect(() => {
         if (!data) {
             fetchData();
@@ -69,7 +73,6 @@ export default function SearchResult() {
         if (data && searchInput && searchType && timeInput && dayInput) {
             performSearch();
         }
-
     }, [data, searchInput, searchType, timeInput, dayInput]);
 
     function formatTime(time: number) {
@@ -87,6 +90,7 @@ export default function SearchResult() {
             <ul className="relative -top-9 sm:top-0 h-[78%] flex items-center justify-center flex-col gap-2 md:gap-4 overflow-y-auto overflow-x-hidden px-2 pb-1.5 custom-scrollbar">
                 {results.map((lesson, index) => (
                     <li key={index} className="w-80 sm:w-96 xl:w-[28rem] 2xl:w-[30rem] text-center text-black dark:text-white rounded-lg flex items-center flex-col md:gap-1 xl:gap-1.5 px-5 py-3 mr-1 text-2xl xl:text-3xl 2xl:text-4xl shadow-[0px_3px_8px_2px_rgb(100,100,100)] dark:shadow-[1px_2px_8px_1px_rgb(10,10,10)] transition-all hover:scale-[1.02] duration-100">
+                        <p>{majorName}</p>
                         <div className="w-full flex justify-between">
                             <span>{dayInput}</span>
                             <span className="font-bold">{lesson.place}</span>

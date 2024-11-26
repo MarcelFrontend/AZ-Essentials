@@ -26,9 +26,10 @@ function DynamicSearch() {
 
     const searchParams = useSearchParams()
 
+    const interStyles = "enabled:hover:scale-105 transition-all duration-150"
     const colorsSmooth = "transition-colors duration-150"
-    const optionsStyle = "md:w-72 lg:w-[25rem] text-3xl md:text-4xl lg:text-5xl px-2 py-1 md:text-lg text-black dark:text-white bg-white dark:bg-gray-900 shadow-md shadow-gray-400 disabled:shadow-black dark:shadow-[1px_2px_5px_1px_rgb(10,10,10)] rounded-md outline-none focus:border-gray-900 dark:focus:border-gray-400 border-2 border-transparent hover:scale-[1.05] transition-all duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-25";
-    const inputStyles = "w-52 md:w-72 lg:w-[25rem] text-3xl md:text-4xl lg:text-5xl text-black dark:text-white dark:bg-gray-900 pl-2 rounded-md outline-none focus:border-gray-400 border-2 border-transparent placeholder:text-gray-500 dark:placeholder:text-white/65 hover:scale-[1.05] transition-all duration-150 shadow-md shadow-gray-400 dark:shadow-[1px_2px_5px_1px_rgb(10,10,10)]"
+    const optionsStyle = `md:w-72 lg:w-[25rem] text-3xl md:text-4xl lg:text-5xl px-2 py-1 md:text-lg text-black dark:text-white bg-white dark:bg-gray-900 shadow-md shadow-gray-400 disabled:shadow-black dark:shadow-[1px_2px_5px_1px_rgb(10,10,10)] rounded-md outline-none focus:border-gray-900 dark:focus:border-gray-400 border-2 border-transparent ${interStyles} cursor-pointer disabled:cursor-not-allowed disabled:opacity-25`;
+    const inputStyles = `w-52 md:w-72 lg:w-[25rem] text-3xl md:text-4xl lg:text-5xl text-black dark:text-white dark:bg-gray-900 pl-2 rounded-md outline-none focus:border-gray-400 border-2 border-transparent placeholder:text-gray-500 dark:placeholder:text-white/65 ${interStyles} shadow-md shadow-gray-400 dark:shadow-[1px_2px_5px_1px_rgb(10,10,10)]`
 
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
 

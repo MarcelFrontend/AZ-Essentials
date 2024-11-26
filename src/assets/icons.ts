@@ -47,7 +47,7 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import { FaToilet } from "react-icons/fa6";
 // Filologia
 import { FaBookOpen } from "react-icons/fa6";
-// ???
+// Nie określony kierunek
 import { FaQuestion } from "react-icons/fa6";
 
 
@@ -65,6 +65,9 @@ import { FaAngleLeft } from "react-icons/fa6";
 // main
 import { FaCog } from "react-icons/fa";
 
+// mian/saved
+import { FaTrashCan } from "react-icons/fa6";
+
 // d-w
 
 export {
@@ -78,6 +81,8 @@ export {
     FaDoorOpen,
     FaCalendarDays,
     FaPersonCircleQuestion,
+    // main/saved
+    FaTrashCan,
     // majors
     FaAngleDown,
     FaAngleUp,

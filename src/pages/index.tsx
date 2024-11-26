@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from 'framer-motion';
 import { useData } from '@/contexts/DataFetchContext';
-import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen, FaCog, GoSun, GoMoon } from '@/assets/icons'
+import { MdAutoFixNormal, MdAutoFixOff, FaPersonCircleQuestion, FaCalendarDays, FaDoorOpen, FaCog, GoSun, GoMoon, FaTrashCan } from '@/assets/icons'
 import { IconType } from "react-icons";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -29,7 +29,9 @@ function Index() {
   // get saved item
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (currentTheme !== "light") {
     setTheme(prefersDark ? "dark" : "light");
+    }
     if (sessionStorage.getItem("azAnim")) {
       setAnimShowed(true)
     }
@@ -59,7 +61,7 @@ function Index() {
 
   // fetching data, anim preference
   useEffect(() => {
-    console.clear();
+    // console.clear();
     const animationPreference = localStorage.getItem("az-anim");
 
     if (animationPreference == 'false') {
@@ -123,8 +125,36 @@ function Index() {
   }
 
   function getSavedMajors() {
+    const interStyles = "hover:scale-105 hover:bg-gray-300 dark:hover:bg-gray-950 active:scale-95 transition-all"
+
+    function removeSaved(major: string) {
+      const saved = localStorage.getItem("az-saved")
+      if (saved) {
+        const parsedSaved: string[] = JSON.parse(saved)
+        const updatedSaved = parsedSaved.filter(savedMajor => savedMajor !== major)
+        setSavedMajorSchedules(updatedSaved)
+        localStorage.setItem("az-saved", JSON.stringify(updatedSaved))
+      }
+    }
+
     if (showSaved) {
       if (!chosenMajor) {
+        if (savedMajorSchedules?.length == 1) {
+          const splitedMajor = savedMajorSchedules[0].split("&");
+          const majorData = data?.find(major =>
+            major.name == splitedMajor[0] &&
+            major.year == splitedMajor[1] &&
+            major.type == splitedMajor[2]
+          );
+          setChosenMajor(majorData)
+          const returnToSavedMajorsMenu = () => {
+            setChosenMajor(undefined)
+          }
+          if (majorData)
+            return (
+              <ScheduleModal returnToMenu={returnToSavedMajorsMenu} chosenMajorData={majorData} />
+            )
+        }
         return savedMajorSchedules?.map((major, index) => {
           const splitedMajor = major.split("&");
           const majorData = data?.find(major =>
@@ -133,10 +163,11 @@ function Index() {
             major.type == splitedMajor[2]
           );
           return (
-            <button onClick={() => setChosenMajor(majorData)} key={index} className="w-40 border rounded-lg">
+            <button onClick={() => setChosenMajor(majorData)} key={index} className={`relative w-40 lg:w-52 shadow-[0px_2px_4px_1px_rgb(5,5,5)] rounded-lg lg:text-2xl py-1 px-2 text-black dark:text-white ${interStyles} group`}>
               {splitedMajor[0]}{" "}
               {splitedMajor[1]}{" "}
               {splitedMajor[2]}
+              <FaTrashCan onClick={(e) => { e.stopPropagation(); removeSaved(major) }} className="w-10 h-10 p-2 absolute -right-2 -top-3 hidden group-hover:block pointer-events-none group-hover:pointer-events-auto hover:text-red-600 dark:hover:text-red-700 transition-shadow" />
             </button>
           );
         });
@@ -153,7 +184,7 @@ function Index() {
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="relative  h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="relative h-[97vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -266,7 +297,7 @@ function Index() {
       </footer>
       {showSaved && savedMajorSchedules && (
         <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div onClick={(e) => e.stopPropagation()} className={`relative max-h-[90%] w-[90%] flex items-center justify-center flex-col gap-2 p-5 pt-2 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
+          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] min-w-[50%] justify-start" : "max-h-[90%] justify-center max-w-[90%] p-5"} items-center flex flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
             {/* Todo: jeśli użytkownik zapisał tylko jeden plan to go defaultowo pokaż, jak nie to zmapuj */}
             {getSavedMajors()}
           </div>

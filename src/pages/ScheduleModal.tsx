@@ -20,7 +20,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
         }
         return initialShowDays;
     });
-    
+
     // risizing
     useEffect(() => {
         setDevWidth(window.innerWidth)
@@ -56,7 +56,6 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
     }, []);
 
     if (!chosenMajorData) return
-
 
     const formatTime = (time: number) =>
         `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
@@ -117,7 +116,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
         } else {
             return <li
                 key={dayIndex}
-                className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[79%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} max-h-full flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[79%]' : 'md:h-[21.5rem] min-h-[99%] lg:h-[26rem]'} max-h-full flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
             >
                 {renderDayName(dayIndex)}
                 {showDays[dayIndex] && (
@@ -167,27 +166,34 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
     if (notEmptyDaysNum) {
         if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
         if (notEmptyDaysNum < lessonsInCol) setLessonsInCol(notEmptyDaysNum);
-
-        return (
-            <>
-                <div className='w-full flex items-center mb-4'>
-                    <FaAngleLeft className='text-3xl' onClick={() => returnToMenu()} />
-                    <span className='w-full text-center font-bold text-xl'>
-                        {chosenMajorData.name}
-                        {" "}
-                        {chosenMajorData.groups[0].slice(4, 6)}
-                    </span>
-                </div>
-                <ul
-                    style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
-                    className={`relative w-full grid md:content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
-                    {/* Todo: Tu powinno być nav na którym powinnien być przycisk do powrotu i informacje o wysłanym kierunku */}
-                    {chosenMajorData.plan?.map((day, index) => {
-                        if (!Array.isArray(day) || day.length === 0) return null;
-                        return renderDay(day, index);
-                    })}
-                </ul>
-            </>
-        );
+        const savedMajors = localStorage.getItem("az-saved")
+        if (savedMajors) {
+            const numberOfSavedMajors = JSON.parse(savedMajors).length
+            return (
+                <>
+                    <div className='w-full flex items-center mb-4 text-black dark:text-white border-b-4 border-gray-950 px-5 py-3'>
+                        {numberOfSavedMajors > 1 && (
+                            <button>
+                                <FaAngleLeft className='text-3xl' onClick={() => returnToMenu()} />
+                            </button>
+                        )}
+                        <span className='w-full text-center font-bold text-xl'>
+                            {chosenMajorData.name}
+                            {" "}
+                            {chosenMajorData.year}
+                        </span>
+                    </div>
+                    <ul
+                        style={{ gridTemplateColumns: `repeat(${lessonsInCol}, 1fr)` }}
+                        className={`relative w-full grid md:content-start gap-1 overflow-y-hidden px-2 py-1 md:pb-0 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 ${isDev && "border border-black dark:border-white"}`}>
+                        {/* Todo: Tu powinno być nav na którym powinnien być przycisk do powrotu i informacje o wysłanym kierunku */}
+                        {chosenMajorData.plan?.map((day, index) => {
+                            if (!Array.isArray(day) || day.length === 0) return null;
+                            return renderDay(day, index);
+                        })}
+                    </ul>
+                </>
+            );
+        }
     }
 };
