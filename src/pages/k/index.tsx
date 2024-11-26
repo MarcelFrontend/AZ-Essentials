@@ -38,7 +38,6 @@ export default function MajorSchedule() {
     const [selectedYear, setSelectedYear] = useState<string | null>(null);
     const [searchedMajor, setSearchedMajor] = useState<string>("");
     const [searchedMajorData, setSearchedMajorData] = useState<MajorTypes[] | null>();
-    const [chosenScheduleData, setChosenScheduleData] = useState<MajorTypes | null>(null);
     const [showFilterSettings, setShowFilterSettings] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>();
     const [showFtMajors, setShowFtMajors] = useState<boolean | null>(null)
@@ -149,7 +148,7 @@ export default function MajorSchedule() {
                         },
                     }}
                     key={index}
-                    onClick={() => setChosenScheduleData(major)} className={`relative h-36 w-full min-[1300px]:h-44 flex items-center justify-center flex-col gap-0.5 text-center px-2 py-1 text-black dark:text-white rounded-md shadow-[0px_2px_5px_2px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_2px_rgb(5,5,5)] ${shadowSmooth} ${isDev && devBorder} transition-colors duration-500 ${interStyles}`}>
+                    className={`relative h-36 w-full min-[1300px]:h-44 flex items-center justify-center flex-col gap-0.5 text-center px-2 py-1 text-black dark:text-white rounded-md shadow-[0px_2px_5px_2px_rgb(200,200,200)] dark:shadow-[0px_2px_10px_2px_rgb(5,5,5)] ${shadowSmooth} ${isDev && devBorder} transition-colors duration-500 ${interStyles}`}>
                     <div className='absolute top-1 right-1 text-3xl md:text-4xl 2xl:text-5xl'>
                         {major.name && getMajorIcon(major.name)}
                     </div>
