@@ -20,17 +20,44 @@ function Index() {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
+  const [userBrowser, setUserBrowser] = useState<string | null>(null)
   const [showSaved, setShowSaved] = useState<boolean>(false);
   const [savedMajorSchedules, setSavedMajorSchedules] = useState<string[] | null>(null);
   const [chosenMajor, setChosenMajor] = useState<MajorTypes | undefined>(undefined);
+  const [devWidth, setDevWidth] = useState<number | null>(null);
 
   const colorsSmooth = "transition-colors duration-100";
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent
+    console.log(userAgent);
+    if (typeof window !== "undefined") {
+      setDevWidth(window.innerWidth)
+    }
+    if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
+      setUserBrowser("Chrome")
+    }
+    //  else if (userAgent.includes("Firefox")) {
+    //   console.log("Firefox")
+    // } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+    //   console.log("Safari")
+    // } else if (userAgent.includes("Edg")) {
+    //   console.log("Edge")
+    // } else if (userAgent.includes("OPR")) {
+    //   console.log("Opera")
+    // } else if (userAgent.includes("Trident")) {
+    //   console.log("Internet Explorer")
+    // } else {
+    //   console.log("Nieznana przeglądarka")
+    // }
+
+  }, [])
 
   // get saved item
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (currentTheme !== "light") {
-    setTheme(prefersDark ? "dark" : "light");
+      setTheme(prefersDark ? "dark" : "light");
     }
     if (sessionStorage.getItem("azAnim")) {
       setAnimShowed(true)
@@ -50,7 +77,6 @@ function Index() {
   const handleAnimationEnd = () => {
     setAnimShowed(true);
     sessionStorage.setItem("azAnim", 'true');
-
   };
 
   function updateAnimationPreference() {
@@ -181,11 +207,10 @@ function Index() {
       }
     }
   }
-  // lol
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="relative h-[97vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="relative h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -285,7 +310,7 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <footer className="w-full flex items-center justify-between absolute bottom-1 px-4">
+      <footer className={`w-full flex items-center justify-between absolute bottom-1 ${userBrowser == "Chrome" && devWidth && devWidth <= 640 && "bottom-10"} px-4`}>
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); sessionStorage.setItem("azIsDev", `${!isDev}`); console.log("Tryb developera:", !isDev);
