@@ -30,26 +30,25 @@ function Index() {
 
   useEffect(() => {
     const userAgent = navigator.userAgent
-    console.log(userAgent);
     if (typeof window !== "undefined") {
       setDevWidth(window.innerWidth)
     }
     if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
       setUserBrowser(userAgent)
+      console.log("Chrome");
+    } else if (userAgent.includes("Firefox")) {
+      console.log("Firefox")
+    } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+      console.log("Safari")
+    } else if (userAgent.includes("Edg")) {
+      console.log("Edge")
+    } else if (userAgent.includes("OPR")) {
+      console.log("Opera")
+    } else if (userAgent.includes("Trident")) {
+      console.log("Internet Explorer")
+    } else {
+      console.log("Nieznana przeglądarka")
     }
-    //  else if (userAgent.includes("Firefox")) {
-    //   console.log("Firefox")
-    // } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
-    //   console.log("Safari")
-    // } else if (userAgent.includes("Edg")) {
-    //   console.log("Edge")
-    // } else if (userAgent.includes("OPR")) {
-    //   console.log("Opera")
-    // } else if (userAgent.includes("Trident")) {
-    //   console.log("Internet Explorer")
-    // } else {
-    //   console.log("Nieznana przeglądarka")
-    // }
 
   }, [])
 
@@ -318,7 +317,7 @@ function Index() {
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        <span>{userBrowser}</span>
+        <span className="text-center">{userBrowser}</span>
         {savedMajorSchedules && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
