@@ -30,13 +30,16 @@ function Index() {
 
   useEffect(() => {
     const userAgent = navigator.userAgent
+    console.log(userAgent);
+    
     if (typeof window !== "undefined") {
       setDevWidth(window.innerWidth)
     }
     if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
       setUserBrowser(userAgent)
-      console.log("Chrome");
+      console.log("Nazwa zawiera w sobie: Chrome");
     } else if (userAgent.includes("Firefox")) {
+      // Jeśli to jest firefox to musi zawierać nazwę Gecko
       console.log("Firefox")
     } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
       console.log("Safari")
