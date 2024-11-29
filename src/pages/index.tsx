@@ -37,12 +37,13 @@ function Index() {
 
     if (typeof window !== "undefined") {
       console.log(window.navigator.appCodeName);
+      console.log("window.screen.height:", window.screen.height * window.devicePixelRatio);
       console.log("window.innerHeight:", window.innerHeight);
       console.log("window.outerHeight:", window.outerHeight);
 
 
       // setDevWidth(window.innerWidth)
-      setUserBrowser(`window.innerHeight:${window.innerHeight}   window.outerHeight: ${window.outerHeight}`)
+      setUserBrowser(`${window.screen.height * window.devicePixelRatio}   window.outerHeight: ${window.outerHeight}`)
     }
   }, [])
 
