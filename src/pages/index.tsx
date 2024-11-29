@@ -201,7 +201,7 @@ function Index() {
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="relative h-[92vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden border">
       <span className="absolute top-10 left-1 w-96 text-center">
         {browserInfo}
       </span>
