@@ -26,16 +26,14 @@ function Index() {
   const [devWidth, setDevWidth] = useState<number | null>(null);
 
   const [userBrowser, setUserBrowser] = useState<string | null>(null)
-  // const [browserInfo, setBrowserInfor] = useState<string | null>(null)
+  const [browserInfo, setBrowserInfor] = useState<string | null>(null)
 
   const colorsSmooth = "transition-colors duration-100";
 
   useEffect(() => {
     console.clear();
     const userAgent = navigator.userAgent
-    console.log(navigator.appVersion)
-    console.log(userAgent)
-
+    setBrowserInfor(userAgent)
 
     if (typeof window !== "undefined") {
       console.log(window.navigator.appCodeName);
@@ -204,6 +202,9 @@ function Index() {
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
     <div className="relative h-[92vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+      <span className="absolute top-3 left-3 w-96 text-center">
+        {browserInfo}
+      </span>
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
