@@ -20,38 +20,29 @@ function Index() {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const { systemTheme, theme, setTheme } = useTheme();
   const currentTheme = theme === 'system' ? systemTheme : theme;
-  const [userBrowser, setUserBrowser] = useState<string | null>(null)
   const [showSaved, setShowSaved] = useState<boolean>(false);
   const [savedMajorSchedules, setSavedMajorSchedules] = useState<string[] | null>(null);
   const [chosenMajor, setChosenMajor] = useState<MajorTypes | undefined>(undefined);
   const [devWidth, setDevWidth] = useState<number | null>(null);
 
+  const [userBrowser, setUserBrowser] = useState<string | null>(null)
+  const [browserInfo, setBrowserInfor] = useState<string | null>(null)
+
   const colorsSmooth = "transition-colors duration-100";
 
   useEffect(() => {
+    console.clear();
     const userAgent = navigator.userAgent
-    console.log(userAgent);
-    
+    console.log(navigator.appVersion)
+    console.log(userAgent)
+
+
     if (typeof window !== "undefined") {
+      console.log(window.navigator.appCodeName);
+
       setDevWidth(window.innerWidth)
     }
-    if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
-      setUserBrowser(userAgent)
-      console.log("Nazwa zawiera w sobie: Chrome");
-    } else if (userAgent.includes("Firefox")) {
-      // Jeśli to jest firefox to musi zawierać nazwę Gecko
-      console.log("Firefox")
-    } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
-      console.log("Safari")
-    } else if (userAgent.includes("Edg")) {
-      console.log("Edge")
-    } else if (userAgent.includes("OPR")) {
-      console.log("Opera")
-    } else if (userAgent.includes("Trident")) {
-      console.log("Internet Explorer")
-    } else {
-      console.log("Nieznana przeglądarka")
-    }
+    setUserBrowser(window.navigator.appCodeName)
 
   }, [])
 
@@ -212,7 +203,7 @@ function Index() {
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="relative h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="relative h-[97vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -320,7 +311,7 @@ function Index() {
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        <span className="text-center">{userBrowser}</span>
+        <span className="text-center">window.clientInformation.appCodeName: {userBrowser}</span>
         {savedMajorSchedules && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
