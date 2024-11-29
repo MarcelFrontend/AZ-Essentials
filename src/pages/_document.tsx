@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en" className="overflow-hidden">
       <Head />
-      <body className="relative h-[calc(100vh-40px)] md:h-screen flex items-center justify-center border antialiased bg-white dark:bg-gray-900 transition-colors duration-[2s] overflow-hidden">
+      <body className="relative max-h-[100vh] md:max-h-screen overflow-auto border antialiased bg-white dark:bg-gray-900 transition-colors duration-[2s]">
         <Main />
         <NextScript />
       </body>
