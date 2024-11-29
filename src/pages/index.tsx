@@ -26,7 +26,7 @@ function Index() {
   const [devWidth, setDevWidth] = useState<number | null>(null);
 
   const [userBrowser, setUserBrowser] = useState<string | null>(null)
-  const [browserInfo, setBrowserInfor] = useState<string | null>(null)
+  // const [browserInfo, setBrowserInfor] = useState<string | null>(null)
 
   const colorsSmooth = "transition-colors duration-100";
 
