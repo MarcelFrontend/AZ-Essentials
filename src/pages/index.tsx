@@ -202,7 +202,7 @@ function Index() {
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
     <div className="relative h-[92vh] md:h-screen flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
-      <span className="absolute top-3 left-1 w-96 text-center">
+      <span className="absolute top-10 left-1 w-96 text-center">
         {browserInfo}
       </span>
       <Head>
@@ -304,7 +304,7 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <footer className={`w-full flex items-center justify-between absolute bottom-1 ${userBrowser == "Chrome" && devWidth && devWidth <= 640 && "bottom-10"} px-4`}>
+      <footer className={`w-full flex items-center justify-between absolute bottom-1 px-4`}>
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); sessionStorage.setItem("azIsDev", `${!isDev}`); console.log("Tryb developera:", !isDev);
