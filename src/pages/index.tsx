@@ -23,7 +23,7 @@ function Index() {
   const [showSaved, setShowSaved] = useState<boolean>(false);
   const [savedMajorSchedules, setSavedMajorSchedules] = useState<string[] | null>(null);
   const [chosenMajor, setChosenMajor] = useState<MajorTypes | undefined>(undefined);
-  const [devWidth, setDevWidth] = useState<number | null>(null);
+  // const [devWidth, setDevWidth] = useState<number | null>(null);
 
   const [userBrowser, setUserBrowser] = useState<string | null>(null)
   const [browserInfo, setBrowserInfor] = useState<string | null>(null)
@@ -38,7 +38,7 @@ function Index() {
     if (typeof window !== "undefined") {
       console.log(window.navigator.appCodeName);
 
-      setDevWidth(window.innerWidth)
+      // setDevWidth(window.innerWidth)
     }
     setUserBrowser(window.navigator.appCodeName)
 
