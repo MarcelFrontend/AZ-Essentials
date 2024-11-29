@@ -37,11 +37,13 @@ function Index() {
 
     if (typeof window !== "undefined") {
       console.log(window.navigator.appCodeName);
+      console.log("window.innerHeight:", window.innerHeight);
+      console.log("window.outerHeight:", window.outerHeight);
+
 
       // setDevWidth(window.innerWidth)
+      setUserBrowser(`window.innerHeight:${window.innerHeight}   window.outerHeight: ${window.outerHeight}`)
     }
-    setUserBrowser(window.navigator.appCodeName)
-
   }, [])
 
   // get saved item
@@ -312,7 +314,7 @@ function Index() {
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        <span className="text-center">window.clientInformation.appCodeName: {userBrowser}</span>
+        <span className="text-center">{userBrowser}</span>
         {savedMajorSchedules && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
