@@ -41,8 +41,8 @@ function DynamicSearch() {
 
     // getting params
     useEffect(() => {
-        const searchType = searchParams.get("t");
-        setSearchType(searchType);
+        const getSearchType = searchParams.get("t");
+        setSearchType(getSearchType);
     }, [searchParams]);
 
     // fetching data 
