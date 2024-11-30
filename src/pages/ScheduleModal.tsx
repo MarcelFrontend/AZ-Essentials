@@ -61,7 +61,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
         `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
 
     function renderDayName(dayIndex: number) {
-        return <div className="w-full flex px-2 text-black dark:text-white border bg-gray-100 dark:bg-gray-900 dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
+        return <div className="w-full flex px-2 text-black dark:text-white  bg-gray-100 dark:bg-gray-900 dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
             <label htmlFor={String(dayIndex)} className="w-full text-xl py-1 cursor-pointer">
                 {daysOfWeek[dayIndex]}
             </label>
@@ -84,7 +84,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
                 if (showDays[dayIndex]) {
                     return <li
                         key={dayIndex}
-                        className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto py-1 px-1`}
+                        className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'min-h-14 max-h-[90%]' : 'md:h-[21.5rem] md:min-h-[99%] lg:h-[26rem]'} flex flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto py-1 px-1 `}
                     >
                         {renderDayName(dayIndex)}
                         {showDays[dayIndex] && (
@@ -100,7 +100,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
             } else {
                 return <li
                     key={dayIndex}
-                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) && 'h-full'} min-w-36 w-full transition-colors duration-[2s] overflow-y-auto`}
+                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) && 'h-full'} w-full bg-transparent overflow-y-auto p-1`}
                 >
                     {renderDayName(dayIndex)}
                     {showDays[dayIndex] && (
@@ -154,7 +154,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
     chosenMajorData.plan.map((day, index) => {
         const truePos = showDays.findIndex(showDay => showDay === true);
         if (day.length < 1) {
-            console.log(showDays[truePos], truePos);
+            if(isDev) console.log(showDays[truePos], truePos);
             if (index === truePos) {
                 const updatedShowDays = Array(showDays.length).fill(false);
                 setShowDays(updatedShowDays);
@@ -171,7 +171,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
             const numberOfSavedMajors = JSON.parse(savedMajors).length
             return (
                 <>
-                    <div className='w-full flex items-center mb-4 text-black dark:text-white border-b-4 border-gray-950 px-5 py-3'>
+                    <div className='w-full flex items-center text-black dark:text-white border-b-4 border-gray-950 px-5 py-3'>
                         {numberOfSavedMajors > 1 && (
                             <button>
                                 <FaAngleLeft className='text-3xl' onClick={() => returnToMenu()} />

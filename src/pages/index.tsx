@@ -184,7 +184,7 @@ function Index() {
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="h-dvh flex items-center justify-between flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden pt-1 md:pt-0 pb-3 md:pb-0">
+    <div className="h-dvh flex items-center justify-between flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden pt-1 pb-3">
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -297,8 +297,7 @@ function Index() {
       </footer>
       {showSaved && savedMajorSchedules && (
         <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] w-[90%] justify-start" : "max-h-[90%] justify-center p-5"} items-center flex flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
-            {/* Todo: jeśli użytkownik zapisał tylko jeden plan to go defaultowo pokaż, jak nie to zmapuj */}
+          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] w-[90%] justify-start" : "max-h-[90%] p-5 overflow-y-auto"} flex items-center flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
             {getSavedMajors()}
           </div>
         </div>

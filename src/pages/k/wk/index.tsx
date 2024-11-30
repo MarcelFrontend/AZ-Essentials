@@ -19,26 +19,14 @@ export default function ChosenMajor() {
     const [searchedMajorName, setSearchedMajorName] = useState<string | null>(null)
     const [searchedMajorYear, setSearchedMajorYear] = useState<string | null>(null)
     const [searchedMajorType, setSearchedMajorType] = useState<string | null>(null)
-    const [isSaved, setIsSaved] = useState<boolean>(false)
+    const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [notEmptyDaysNum, setNotEmptyDaysNum] = useState<number | null>(null)
 
     const { isDev } = useDev();
 
     const daysOfWeek = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', "Sobota", "Niedziela"];
 
-    const [showDays, setShowDays] = useState<boolean[]>(() => {
-        if (typeof window !== "undefined" && window.innerWidth >= 768) {
-            const initialShowDays = Array(daysOfWeek.length).fill(true);
-            console.log("Pokaż wszysktie");
-            return initialShowDays
-        } else {
-            const initialShowDays = Array(daysOfWeek.length).fill(false);
-            if (new Date().getDay() - 1 >= 0) {
-                initialShowDays[new Date().getDay() - 1] = true;
-            }
-            console.log("Pokaż tylko jeden");
-            return initialShowDays;
-        }
-    });
+    const [showDays, setShowDays] = useState<boolean[]>([false, false, false, false, false, false, false,])
 
     // risizing
     useEffect(() => {
@@ -59,10 +47,7 @@ export default function ChosenMajor() {
             if (width > 1920) {
                 setShowDays(Array(daysOfWeek.length).fill(true));
             } else {
-                const todayIndex = new Date().getDay() - 1;
-                const initialShowDays = Array(daysOfWeek.length).fill(false);
-                if (todayIndex >= 0) initialShowDays[todayIndex] = true;
-                setShowDays(initialShowDays);
+                showTodayPlan()
             }
             setLessonsInRow(columns);
         };
@@ -96,11 +81,13 @@ export default function ChosenMajor() {
         setSearchedMajorType(type);
 
         if (data) {
+            console.log("Dane są");
             setErrorMessage("")
             if (name && year && type) {
                 const foundMajor = data.find(major => (major.name == name && major.year == year && major.type == type));
                 if (foundMajor) {
                     setChosenScheduleData(foundMajor);
+                    setNotEmptyDaysNum(foundMajor.plan.filter(day => day.length > 0).length)
                 } else {
                     setErrorMessage("Nie udało się znaleźć danego kierunku")
                 }
@@ -110,37 +97,40 @@ export default function ChosenMajor() {
         } else {
             // Todo: obsłuż ten przypadek
             console.log("Nie udało się pobrać danych");
+            fetchData();
         }
         const savedMajorsString = localStorage.getItem("az-saved");
         const params = savedMajorsString ? JSON.parse(savedMajorsString) : [];
-        console.log(params);
 
         if (params.some((major: string) => major === `${name}&${year}&${type}`)) {
             setIsSaved(true);
         } else {
             setIsSaved(false);
         }
-        console.log("Szerokość:", devWidth);
         if (devWidth >= 1920) {
-            console.log("Pokaż wszystkie");
-
             setShowDays(Array(daysOfWeek.length).fill(true))
         } else {
-            const todayIndex = new Date().getDay() - 1;
-            const updatedShowDays = Array(daysOfWeek.length).fill(false);
+            showTodayPlan()
+        }
+    }, [data, searchParams]);
+
+    function showTodayPlan() {
+        const todayIndex = new Date().getDay() - 1;
+        const updatedShowDays = Array(daysOfWeek.length).fill(false);
+        if (chosenScheduleData && chosenScheduleData?.plan[todayIndex].length > 0) {
+            console.log("potem");
             updatedShowDays[todayIndex] = true;
             setShowDays(updatedShowDays);
         }
-    }, [data, searchParams]);
+    }
 
     function renderChosenSchedule() {
         if (!chosenScheduleData) return null;
         const formatTime = (time: number) =>
             `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
 
-        const notEmptyDaysNum = chosenScheduleData.plan.filter(day => day.length > 0).length;
-
         if (isDev) console.log("Niepuste dni:", notEmptyDaysNum);
+        if (!notEmptyDaysNum) return
         if (notEmptyDaysNum < lessonsInRow) setLessonsInRow(notEmptyDaysNum);
 
         function renderDayName(dayIndex: number) {
@@ -167,7 +157,7 @@ export default function ChosenMajor() {
                     if (showDays[dayIndex]) {
                         return <li
                             key={dayIndex}
-                            className={`${(notEmptyDaysNum === lessonsInRow) ? 'h-full' : 'h-full md:h-[22rem] lg:h-[30rem] xl:h-96 pb-3'} flex flex-col gap-1  transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                            className={`${(notEmptyDaysNum === lessonsInRow) ? 'h-full' : 'h-full pb-3'} flex flex-col gap-1 transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
                         >
                             {renderDayName(dayIndex)}
                             {showDays[dayIndex] && (
