@@ -196,10 +196,10 @@ function Index() {
       </Head>
       {/* Todo opcjonalne: Mini gra */}
       {/* Todo: Pokaż za pomocą procentów poprawność danych */}
-      <div className="w-10 self-end flex items-center flex-col gap-2">
+      <div className="relative w-10 self-end flex items-center flex-col gap-2">
         <FaCog onClick={() => setShowSettings(!showSettings)} title="Preferencje" className="text-3xl text-center cursor-pointer hover:rotate-180 transition-transform text-black dark:text-white" />
         {showSettings && (
-          <ul className="flex items-center flex-col gap-2 dark:bg-gray-950/75 p-1 rounded-lg">
+          <ul className="absolute top-10 right-1 flex items-center flex-col gap-2 dark:bg-gray-950/75 p-1 rounded-lg">
             <li onClick={() => updateAnimationPreference()}>
               {animationPreference ? (
                 <MdAutoFixNormal title="Wyłącz animacje" className="relative -left-[1.1px] -bottom-[1.1px] text-4xl cursor-pointer text-black dark:text-white" />
