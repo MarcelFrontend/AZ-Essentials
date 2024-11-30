@@ -199,7 +199,7 @@ export default function MajorSchedule() {
     }, [data, searchedMajorData, selectedYear, showFtMajors]);
 
     return (
-        <div className={`relative h-[92vh] sm:h-screen flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
+        <div className={`relative h-dvh md:h-screen flex items-center flex-col overflow-hidden ${isDev && devBorder}`}>
             <Head>
                 <title>Kierunki</title>
             </Head>
