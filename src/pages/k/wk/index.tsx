@@ -66,7 +66,7 @@ export default function ChosenMajor() {
             if (isDev) console.log("Dane istnieją, nie trzeba ich pobierać:", data);
         } else {
             fetchData();
-            console.clear();
+            showTodayPlan()
         }
     }, []);
 
@@ -118,7 +118,6 @@ export default function ChosenMajor() {
         const todayIndex = new Date().getDay() - 1;
         const updatedShowDays = Array(daysOfWeek.length).fill(false);
         if (chosenScheduleData && chosenScheduleData?.plan[todayIndex].length > 0) {
-            console.log("potem");
             updatedShowDays[todayIndex] = true;
             setShowDays(updatedShowDays);
         }
