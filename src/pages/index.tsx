@@ -25,26 +25,7 @@ function Index() {
   const [chosenMajor, setChosenMajor] = useState<MajorTypes | undefined>(undefined);
   // const [devWidth, setDevWidth] = useState<number | null>(null);
 
-  const [userBrowser, setUserBrowser] = useState<string | null>(null)
-  const [browserInfo, setBrowserInfor] = useState<string | null>(null)
-
   const colorsSmooth = "transition-colors duration-100";
-
-  useEffect(() => {
-    console.clear();
-    const userAgent = navigator.userAgent
-    setBrowserInfor(userAgent)
-
-    if (typeof window !== "undefined") {
-      console.log(window.navigator.appCodeName);
-      console.log("window.innerHeight:", window.innerHeight);
-      console.log("window.outerHeight:", window.outerHeight);
-
-
-      // setDevWidth(window.innerWidth)
-      setUserBrowser(`window.innerHeight: ${window.innerHeight}   window.outerHeight: ${window.outerHeight}`)
-    }
-  }, [])
 
   // get saved item
   useEffect(() => {
@@ -203,10 +184,7 @@ function Index() {
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="flex items-center justify-center flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden border">
-      <span className="absolute top-10 left-1 w-96 text-center">
-        {browserInfo}
-      </span>
+    <div className="h-dvh flex items-center justify-between flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -218,7 +196,7 @@ function Index() {
       </Head>
       {/* Todo opcjonalne: Mini gra */}
       {/* Todo: Pokaż za pomocą procentów poprawność danych */}
-      <div className="w-10 absolute top-3 right-4 md:right-3 flex items-center flex-col gap-2">
+      <div className="w-10 self-end flex items-center flex-col gap-2">
         <FaCog onClick={() => setShowSettings(!showSettings)} title="Preferencje" className="text-3xl text-center cursor-pointer hover:rotate-180 transition-transform text-black dark:text-white" />
         {showSettings && (
           <ul className="flex items-center flex-col gap-2 dark:bg-gray-950/75 p-1 rounded-lg">
@@ -306,7 +284,7 @@ function Index() {
           </Link>
         </ul>
       </div>
-      <footer className={`w-full flex items-center justify-between absolute bottom-1 px-4`}>
+      <footer className={`w-full flex items-center justify-between px-4`}>
         <span
           onDoubleClick={() => {
             setIsDev(!isDev); sessionStorage.setItem("azIsDev", `${!isDev}`); console.log("Tryb developera:", !isDev);
@@ -314,7 +292,6 @@ function Index() {
           className={`lg:text-xl leading-3 ${isLoading && "text-yellow-200 dark:text-yellow-900"} ${!isLoading && data && "text-green-200 dark:text-green-800"} ${!isLoading && data === null && "text-red-300 dark:text-red-900"} transition-colors duration-100`}>
           Beta
         </span>
-        <span className="text-center">{userBrowser}</span>
         {savedMajorSchedules && <BsBookmarkCheckFill onClick={() => setShowSaved(() => !showSaved)} className=" text-3xl cursor-pointer z-10 text-black dark:text-white transition-colors duration-100" />
         }
       </footer>
