@@ -167,7 +167,7 @@ function Index() {
               {splitedMajor[0]}{" "}
               {splitedMajor[1]}{" "}
               {splitedMajor[2]}
-              <FaTrashCan onClick={(e) => { e.stopPropagation(); removeSaved(major) }} className="w-10 h-10 p-2 absolute -right-2 -top-3 hidden group-hover:block pointer-events-none group-hover:pointer-events-auto hover:text-red-600 dark:hover:text-red-700 transition-shadow" />
+              <FaTrashCan onClick={(e) => { e.stopPropagation(); removeSaved(major) }} className="w-5 h-5 md:w-10 md:h-10  md:p-2 absolute -right-2 md:-right-2 -top-2 md:-top-3 block md:hidden group-hover:block md:pointer-events-none group-hover:pointer-events-auto hover:text-red-600 dark:hover:text-red-700 transition-shadow" />
             </button>
           );
         });
@@ -184,7 +184,7 @@ function Index() {
 
   return (
     // Todo: Jeśli meta viewport nie zadziała przywróć h-[93vh]
-    <div className="h-dvh flex items-center justify-between flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden">
+    <div className="h-dvh flex items-center justify-between flex-col gap-16 md:gap-24 lg:gap-32 overflow-hidden pt-1 md:pt-0 pb-3 md:pb-0">
       <Head>
         <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -297,7 +297,7 @@ function Index() {
       </footer>
       {showSaved && savedMajorSchedules && (
         <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] min-w-[50%] justify-start" : "max-h-[90%] justify-center max-w-[90%] p-5"} items-center flex flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
+          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] w-[90%] justify-start" : "max-h-[90%] justify-center p-5"} items-center flex flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
             {/* Todo: jeśli użytkownik zapisał tylko jeden plan to go defaultowo pokaż, jak nie to zmapuj */}
             {getSavedMajors()}
           </div>

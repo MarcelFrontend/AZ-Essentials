@@ -61,7 +61,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
         `${Math.floor(time / 60)}:${time % 60 === 0 ? '00' : time % 60 < 10 ? '0' + (time % 60) : time % 60}`;
 
     function renderDayName(dayIndex: number) {
-        return <div className="w-full flex px-2 text-black dark:text-white border bg-gray-100 dark:bg-gray-900  dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
+        return <div className="w-full flex px-2 text-black dark:text-white border bg-gray-100 dark:bg-gray-900 dark:border-gray-950 rounded-lg py-1 shadow-[0px_1px_3px_1px_rgb(150,150,150)] dark:shadow-[0px_1px_3px_1px_rgb(0,0,0)]">
             <label htmlFor={String(dayIndex)} className="w-full text-xl py-1 cursor-pointer">
                 {daysOfWeek[dayIndex]}
             </label>
@@ -100,7 +100,7 @@ export default function ScheduleModal({ chosenMajorData, returnToMenu }: Schedul
             } else {
                 return <li
                     key={dayIndex}
-                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) ? 'h-full' : 'md:h-80 lg:h-[28rem] xl:h-96'} min-w-36 max-w-full sm:w-full flex items-center justify-center flex-col gap-1 bg-transparent transition-colors duration-[2s] overflow-y-auto px-2 py-1`}
+                    className={`${(notEmptyDaysNum === lessonsInCol && devWidth > 768) && 'h-full'} min-w-36 w-full transition-colors duration-[2s] overflow-y-auto`}
                 >
                     {renderDayName(dayIndex)}
                     {showDays[dayIndex] && (
