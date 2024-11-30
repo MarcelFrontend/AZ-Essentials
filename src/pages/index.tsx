@@ -83,6 +83,9 @@ function Index() {
   }, [data])
 
   function ListEl({ icon: Icon, mainTask, taskDesc, index }: { icon: IconType, mainTask: string, taskDesc: string, index: number }) {
+    const liStyles = "relative md:min-h-48 md:w-52 lg:w-72 flex items-center flex-row md:flex-col gap-2 text-center px-5 py-2.5 md:py-5 rounded-2xl md:rounded-xl transition-shadow duration-1000 delay-500 dark:duration-1000 dark:delay-100 shadow-[0px_2px_7px_1px_rgb(200,200,200)] dark:shadow-[0px_3px_3px_1px_rgb(10,10,10)] hover:bg-gray-100/75 dark:hover:bg-gray-800/50 cursor-pointer"
+    const iconStyles = "text-2xl md:text-3xl text-black dark:text-white transition-colors duration-[2.25s]"
+    const pStyles = "hidden md:block w-55 text-xs md:text-sm md:leading-[19px] lg: text - lg lg: leading - [24px] text - gray - 600 dark: text - gray - 400 transition - colors duration - [2.5s]"
     return (
       <>
         {(animationPreference && animShowed == false) ? (
@@ -95,27 +98,24 @@ function Index() {
               delay: index / 2 + 1.2
             }}
             onAnimationComplete={() => index == 2 && animationPreference && handleAnimationEnd()}
-            className={`relative md:min-h-48 md:w-52 lg:w-72 flex items-center flex-row md:flex-col gap-2 text-center px-4 py-1.5 md:py-5 rounded-2xl md:rounded-xl transition-shadow duration-1000 delay-500 dark:duration-1000 dark:delay-100 shadow-[0px_2px_7px_1px_rgb(200,200,200)] dark:shadow-[0px_3px_3px_1px_rgb(10,10,10)] hover:bg-gray-100/75 dark:hover:bg-gray-800/50 cursor-pointer`}
+            className={liStyles}
           >
-            <Icon className={`text-2xl md:text-3xl text-black dark:text-white transition-colors duration-[2.25s] `} />
+            <Icon className={iconStyles} />
             <span className={`font-bold md:text-xl text-black dark:text-white transition-colors duration-[2.25s] `}>
               {mainTask}
             </span>
-            <p className={`hidden md:block w-55 text-xs md:text-sm md:leading-[19px
-            lg:text-lg lg:leading-[24px] text-gray-600 dark:text-gray-400 transition-colors duration-[2.5s]`}>
+            <p className={pStyles}>
               {taskDesc}
             </p>
           </motion.li>
         ) : (
           <li
-            className={`relative md:min-h-48 md:w-52 lg:w-72 flex items-center flex-row md:flex-col gap-2 text-center px-4 py-1.5 md:py-5 rounded-2xl md:rounded-xl transition-shadow duration-1000 delay-500 dark:duration-1000 dark:delay-100 shadow-[0px_2px_7px_1px_rgb(200,200,200)] dark:shadow-[0px_3px_3px_1px_rgb(10,10,10)] hover:bg-gray-100/75 dark:hover:bg-gray-800/50 cursor-pointer`}
-          >
-            <Icon className={`text-2xl md:text-3xl text-black dark:text-white transition-colors duration-[2.25s]`} />
+            className={liStyles}>
+            <Icon className={iconStyles} />
             <span className={`font-bold md:text-xl text-black dark:text-white transition-colors duration-[2.25s]`}>
               {mainTask}
             </span>
-            <p className={`hidden md:block w-55 text-xs md:text-sm md:leading-[19px
-            lg:text-lg lg:leading-[24px] text-gray-600 dark:text-gray-400 transition-colors duration-[2.5s]`}>
+            <p className={pStyles}>
               {taskDesc}
             </p>
           </li>
@@ -297,7 +297,7 @@ function Index() {
       </footer>
       {showSaved && savedMajorSchedules && (
         <div onClick={() => setShowSaved(false)} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] w-[90%] justify-start" : "max-h-[90%] p-5 overflow-y-auto"} flex items-center flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
+          <div onClick={(e) => e.stopPropagation()} className={`relative ${chosenMajor ? "h-[90%] w-[75%] justify-start" : "max-h-[90%] p-5 overflow-y-auto"} flex items-center flex-col gap-4 bg-gray-200 dark:bg-gray-900 rounded-lg transition-colors duration-150 border-4 border-gray-400 dark:border-gray-800 ${isDev && "border border-black dark:border-white"}`}>
             {getSavedMajors()}
           </div>
         </div>
